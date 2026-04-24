@@ -497,222 +497,216 @@
     // ------------- QUESTION DATA (25 total) -------------
     const questions = [
             // MS PAINT MOVIE POSTER – generic self-mark
-      {
-    id: "northernmost-scandinavia",
-    type: "mcq",
-    tag: "Geography",
-    text: "What is the northernmost Scandinavian country?",
-    options: ["Denmark", "Sweden", "Finland", "Norway"],
-    correctIndex: 3,
-    maxPoints: 1
-  },
-  {
-    id: "sydney-hobart-decade",
-    type: "mcq",
-    tag: "Movies",
-    text: "In which decade was the Wizard of Oz released",
-    options: ["1920s", "1930s", "1940s", "1950s"],
-    correctIndex: 1,
-    maxPoints: 1
-  },
-  {
-    id: "lapstone-artisan",
-    type: "mcq",
-    tag: "General knowledge",
-    text: "What kind of artisan might use a lapstone?",
-    options: ["Blacksmith", "Shoemaker", "Carpenter", "Bricklayer"],
-    correctIndex: 1,
-    maxPoints: 1
-  },
-  {
-    id: "biden-middle-name",
-    type: "mcq",
-    tag: "Politics",
-    text: "What is former US president Joe Biden’s middle name?",
-    options: ["Robertson", "Robar", "Robinette", "Tony"],
-    correctIndex: 2,
-    maxPoints: 1
-  },
-  {
-    id: "thylacoleo",
-    type: "mcq",
-    tag: "Animals",
-    text: "Which of the following animals are the deadliest by number of human deaths per year?",
-    options: ["Hippo", "Scorpion", "Elephant", "Crocodiles"],
-    correctIndex: 1,
-    maxPoints: 1
-  },
-  {
-    id: "eye-of-the-tiger",
-    type: "mcq",
-    tag: "Movies",
-    text: "Survivor’s 'Eye of the Tiger' was the theme song for which Rocky film?",
-    options: ["Rocky", "Rocky II", "Rocky III", "Rocky IV"],
-    correctIndex: 2,
-    maxPoints: 1
-  },
-  {
-    id: "cooking-method",
-    type: "mcq",
-    tag: "Food",
-    text: "Which cooking method is common to the dishes crêpes suzette, bombe Alaska and cherries jubilee?",
-    options: ["Flambé", "Sautéing", "Braising", "Searing"],
-    correctIndex: 0,
-    maxPoints: 1
-  },
-  {
-    id: "reverse-swing",
-    type: "text-exact",
-    tag: "Sport",
-    text: "Reverse swing is a technique used in which ball sport?",
-    correctAnswer: "cricket",
-    maxPoints: 1
-  },
-  {
-    id: "konnichiwa",
-    type: "text-exact",
-    tag: "Language",
-    text: "Konnichiwa is a greeting in which language?",
-    correctAnswer: "Japanese",
-    maxPoints: 1
-  },
-  {
-    id: "knot-speed",
-    type: "numeric",
-    tag: "General knowledge",
-    text: "A knot is equal to how many nautical miles per hour?",
-    correctNumber: 1,
-    maxPoints: 1
-  },
-  {
-    id: "last-showgirl",
-    type: "mcq",
-    tag: "Movies",
-    text: "Who plays the title role in the 2024 film The Last Showgirl?",
-    options: ["Jennifer Lopez", "Halle Berry", "Tara Reid", "Pamela Anderson"],
-    correctIndex: 3,
-    maxPoints: 1
-  },
-  {
-    id: "batavia",
-    type: "text-exact",
-    tag: "Geography",
-    text: "Batavia is a former name of which Asian city?",
-    correctAnswer: "Jakarta",
-    maxPoints: 1
-  },
-  {
-    id: "arch-truss",
-    type: "text-exact",
-    tag: "Engineering",
-    text: "Arch, truss and suspension are types of what structure?",
-    correctAnswer: "bridge",
-    maxPoints: 1
-  },
-  {
-    id: "ovaries",
-    type: "numeric",
-    tag: "Biology",
-    text: "Women usually have how many ovaries?",
-    correctNumber: 2,
-    maxPoints: 1
-  },
-  {
-    id: "cranberries-song",
-    type: "text-exact",
-    tag: "Music",
-    text: "Which song by the Cranberries begins, 'Oh, my life is changing every day/In every possible way'?",
-    correctAnswer: "Dreams",
-    maxPoints: 1
-  },
-  {
-    id: "last-showgirl",
-    type: "mcq",
-    tag: "Movies",
-    text: "Pedro Sanchez is the sidekick to whom?",
-    options: ["Nacho Libre", "Napoleaon Dynamite", "Flash Gordon", "Hot Rod"],
-    correctIndex: 1,
-    maxPoints: 1
-  },
-  {
-    id: "melbourne-grid",
-    type: "mcq",
-    tag: "Movies",
-    text: "In what year was the movie Gladiator released and soccer palyer Erling Haaland born?",
-    options: ["1999", "2000", "2001", "2002"],
-    correctIndex: 1,
-    maxPoints: 1
-  },
-  {
-    id: "sparrows-fart",
-    type: "mcq",
-    tag: "Phrases",
-    text: "Does 'sparrow’s fart' refer to early morning, lunchtime, early evening or midnight?",
-    options: ["Early morning", "Lunchtime", "Early evening", "Midnight"],
-    correctIndex: 0,
-    maxPoints: 1
-  },
+      
+{
+id: "spanish-steps",
+type: "mcq",
+tag: "Geography",
+text: "In which city are the Spanish Steps?",
+options: ["Paris", "Athens", "Madrid", "Rome"],
+correctIndex: 3,
+maxPoints: 1
+},
+{
+id: "jerk-cooking",
+type: "mcq",
+tag: "Food",
+text: "Jerk cooking originated in which country?",
+options: ["Mexico", "Jamaica", "Cuba", "Brazil"],
+correctIndex: 1,
+maxPoints: 1
+},
+{
+id: "anagram-honestly",
+type: "text-exact",
+tag: "Wordplay",
+text: "Which word meaning 'genuinely' is an anagram of 'on the sly'?",
+correctAnswer: "honestly",
+maxPoints: 1
 
-  {
-    id: "coal-country",
-    type: "mcq",
-    tag: "Environment",
-    text: "Which country was the first to completely stop using coal to generate power?",
-    options: ["Australia", "Canada", "China", "United Kingdom"],
-    correctIndex: 3,
-    maxPoints: 1
-  },
-  {
-    id: "all-that-jazz",
-    type: "text-exact",
-    tag: "Musicals",
-    text: "All That Jazz, Cell Block Tango and Mr Cellophane are songs from which musical?",
-    correctAnswer: "Chicago",
-    maxPoints: 1
-  },
-  {
-    id: "cezanne-gauguin",
-    type: "text-exact",
-    tag: "Art",
-    text: "What first name did artists Cézanne and Gauguin share?",
-    correctAnswer: "Paul",
-    maxPoints: 1
-  },
-  {
-    id: "mexico-emoji",
-    type: "text-exact",
-    tag: "Olympics",
-    text: "In what Olympic event to Men and Women compete together?",
-    correctAnswer: "equestrian",
-    maxPoints: 1
-  },
-  {
-    id: "anagram-angered",
-    type: "text-exact",
-    tag: "Wordplay",
-    text: "What word is both an anagram of, and synonym for, 'angered'?",
-    correctAnswer: "enraged",
-    maxPoints: 1
-  },
-  {
-    id: "akubra-pelts",
-    type: "text-exact",
-    tag: "Animals",
-    text: "What is a female elephant called?",
-    correctAnswer: "cow",
-    maxPoints: 1
-  },
-  {
-    id: "akubra-pelts",
-    type: "text-exact",
-    tag: "Animals",
-    text: "What is a baby goat called?",
-    correctAnswer: "kid",
-    maxPoints: 1
-  }
+},
+{
+id: "non-consecutive-president",
+type: "mcq",
+tag: "Politics",
+text: "Before Donald Trump, who was the only US president to have won non-consecutive terms?",
+options: ["Theodore Roosevelt", "Grover Cleveland", "Woodrow Wilson", "Ulysses S. Grant"],
+correctIndex: 1,
+maxPoints: 1
+},
+{
+id: "at-symbol",
+type: "mcq",
+tag: "General knowledge",
+text: "The @ symbol shares a key with which number on a standard keyboard?",
+options: ["1", "2", "3", "4"],
+correctIndex: 1,
+maxPoints: 1
+},
+{
+id: "palindrome",
+type: "text-exact",
+tag: "Wordplay",
+text: "What is a word, phrase or number that reads the same forwards and backwards?",
+correctAnswer: "palindrome",
+maxPoints: 1
 
-  
-    ];
+},
+{
+id: "braxton-hicks",
+type: "mcq",
+tag: "Biology",
+text: "“False” contractions that can occur in pregnancy are known as Braxton ... what?",
+options: ["Hicks", "Jones", "Marks", "Wells"],
+correctIndex: 0,
+maxPoints: 1
+},
+{
+id: "attorney-general-plural",
+type: "mcq",
+tag: "Language",
+text: "What is the plural of attorney-general?",
+options: ["Attorney-generals", "Attorneys-general", "Attorney generals", "Attornies-general"],
+correctIndex: 1,
+maxPoints: 1
+},
+{
+id: "nasal-septum",
+type: "text-exact",
+tag: "Biology",
+text: "Name the cartilage wall separating the nostrils.",
+correctAnswer: "Septum",
+
+maxPoints: 1
+},
+{
+id: "scarface-thriller-year",
+ type: "year",
+tag: "Year",
+text: "In what year was the movie Scarface released, did the album Thriller reach number 1 in the USA, and was Andrew Garfield born?",
+correctYear: 1983,
+maxPoints: 2
+
+},
+{
+id: "manx",
+type: "mcq",
+tag: "Geography",
+text: "Manx is a historical language of which Crown dependency?",
+options: ["Jersey", "Guernsey", "Isle of Man", "Gibraltar"],
+correctIndex: 2,
+maxPoints: 1
+},
+{
+id: "womens-tennis",
+type: "mcq",
+tag: "Sport",
+text: "Who is currently ranked No. 1 in women’s singles tennis?",
+options: ["Iga Świątek", "Aryna Sabalenka", "Coco Gauff", "Elena Rybakina"],
+correctIndex: 1,
+maxPoints: 1
+},
+{
+id: "neptune-visible",
+type: "mcq",
+tag: "Science",
+text: "Is Neptune visible to the naked eye?",
+options: ["True", "False"],
+correctIndex: 1,
+maxPoints: 1
+},
+{
+id: "third-man",
+type: "mcq",
+tag: "Movies",
+text: "Which 1949 film features Orson Welles as Harry Lime?",
+options: ["Casablanca", "The Third Man", "Citizen Kane", "Rebecca"],
+correctIndex: 1,
+maxPoints: 1
+},
+{
+id: "azure-colour",
+type: "mcq",
+tag: "General knowledge",
+text: "What shade is azure?",
+options: ["Green", "Purple", "Blue", "Red"],
+correctIndex: 2,
+maxPoints: 1
+},
+{
+id: "draco-malfoy",
+type: "mcq",
+tag: "Movies",
+text: "In which Harry Potter film does Draco Malfoy have the most screen time in minutes from the first 3 movies?",
+options: ["Philosopher's Stone", "Chamber of Secrets", "Prisoner of Azkeban"],
+correctIndex: 1,
+maxPoints: 1
+},
+{
+id: "ted-talks",
+type: "text-exact",
+tag: "General knowledge",
+text: "What does the 'D' in TED Talks stand for?",
+correctAnswer: "Design",
+
+maxPoints: 1
+},
+{
+id: "coachella-latina",
+
+tag: "Music",
+text: "Who was the first Latina to headline Coachella just recently?",
+correctAnswer: "Karol G",
+
+maxPoints: 1
+},
+{
+id: "first-ebay-item",
+type: "mcq",
+tag: "Tech",
+text: "What was the first object sold on eBay?",
+options: [ "Toy Car", "Trench Coat", "Book","Broken laser pointer"],
+correctIndex: 3,
+maxPoints: 1
+},
+{
+id: "least-dense-asia",
+type: "mcq",
+tag: "Geography",
+text: "Which Asian country is the least densely populated with just 2 people per square km?",
+options: ["Mongolia", "Kazakhstan", ""Laos", "Uzbekistan"],
+correctIndex: 0,
+maxPoints: 1
+},
+{
+id: "moon-mission",
+type: "mcq",
+tag: "Space",
+text: "What was the name of the recent mission that sent 4 astronauts around the Moon?",
+options: ["Pioneer IV", "Artemis II", "Apollo 13", "Orion I"],
+correctIndex: 1,
+maxPoints: 1
+},
+{
+id: "dead-body-line",
+type: "text-exact",
+tag: "Movies",
+text: "Which movie opens with the line 'I was 12 going on 13 the first time I saw a dead human being?",
+correctAnswer: "Stand by me",
+
+maxPoints: 1
+},
+{
+id: "pixar-dvd",
+type: "mcq",
+tag: "Movies",
+text: "Which Pixar movie is the best-selling DVD of all time?",
+options: ["Finding Nemo", "Toy Story", "The Incredibles", "Cars"],
+correctIndex: 0,
+maxPoints: 1
+}
+]
+;
 
     // ------------- STATE -------------
     const questionStates = questions.map(q => ({
