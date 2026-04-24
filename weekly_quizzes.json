@@ -676,10 +676,95 @@ maxPoints: 1
 
   ]
 },
+   {
+  "title": "Big Fat Sunday Quiz #4",
+  "questions": [
+
     {
-      "title": "Big Fat Sunday Quiz #4",
-      "questions": []
+      "id": "world-cup-winner-2022",
+      "type": "mcq",
+      "tag": "Sport",
+      "text": "Who won the 2022 FIFA World Cup?",
+      "options": ["France", "Argentina", "Brazil", "Germany"],
+      "correctIndex": 1,
+      "maxPoints": 1
     },
+    {
+      "id": "nba-teams",
+      "type": "numeric",
+      "tag": "Sport",
+      "text": "How many teams are in the NBA?",
+      "correctNumber": 30,
+      "maxPoints": 1
+    },
+    {
+      "id": "fastest-100m",
+      "type": "text-exact",
+      "tag": "Sport",
+      "text": "Who holds the men's 100m world record?",
+      "correctAnswer": "usain bolt",
+      "maxPoints": 1
+    },
+    {
+      "id": "tennis-grand-slams",
+      "type": "numeric",
+      "tag": "Sport",
+      "text": "How many Grand Slam tournaments are there in tennis each year?",
+      "correctNumber": 4,
+      "maxPoints": 1
+    },
+    {
+      "id": "cricket-overs",
+      "type": "numeric",
+      "tag": "Sport",
+      "text": "How many overs per side in a T20 cricket match?",
+      "correctNumber": 20,
+      "maxPoints": 1
+    },
+    {
+      "id": "olympic-symbol",
+      "type": "text-exact",
+      "tag": "Sport",
+      "text": "What do the Olympic rings represent?",
+      "correctAnswer": "continents",
+      "maxPoints": 1
+    },
+    {
+      "id": "super-bowl",
+      "type": "mcq",
+      "tag": "Sport",
+      "text": "Which sport is played in the Super Bowl?",
+      "options": ["Baseball", "Basketball", "American Football", "Rugby"],
+      "correctIndex": 2,
+      "maxPoints": 1
+    },
+    {
+      "id": "rugby-points-try",
+      "type": "numeric",
+      "tag": "Sport",
+      "text": "How many points is a try worth in rugby union?",
+      "correctNumber": 5,
+      "maxPoints": 1
+    },
+    {
+      "id": "f1-drivers",
+      "type": "numeric",
+      "tag": "Sport",
+      "text": "How many drivers are on the Formula 1 grid in a race?",
+      "correctNumber": 20,
+      "maxPoints": 1
+    },
+    {
+      "id": "golf-major-count",
+      "type": "numeric",
+      "tag": "Sport",
+      "text": "How many golf majors are there?",
+      "correctNumber": 4,
+      "maxPoints": 1
+    }
+
+  ]
+},
     {
       "title": "Big Fat Sunday Quiz #5",
       "questions": []
