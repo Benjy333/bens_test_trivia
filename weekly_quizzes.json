@@ -133,7 +133,7 @@
     maxPoints: 1
   },
   {
-    id: "last-showgirl",
+    id: "pedro-sanchez",
     type: "mcq",
     tag: "Movies",
     text: "Pedro Sanchez is the sidekick to whom?",
@@ -210,7 +210,7 @@
     maxPoints: 1
   },
   {
-    id: "akubra-pelts",
+    id: "goat",
     type: "text-exact",
     tag: "Animals",
     text: "What is a baby goat called?",
