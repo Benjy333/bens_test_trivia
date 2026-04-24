@@ -1,417 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
-
-  
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta property="og:title" content="The Big Fat Sunday Quiz · Ben’s Trivia" />
-  <meta property="og:description" content="25 questions · Weekly Sunday Challenge · Try beat my score!" />
-  <meta property="og:image" content="https://benjy333.github.io/Bens-Trivia/preview.png" />
-  <meta property="og:url" content="https://benjy333.github.io/Bens-Trivia/big-fat-sunday-quiz.html" />
-  <meta property="og:type" content="website" />
-  <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="630" />
-
-  <title>The Big Fat Sunday Quiz</title>
+  <title>Ben’s Trivia — Daily Trivia</title>
   <link rel="stylesheet" href="style.css" />
-
-  <style>
-    /* ===== HEADER (shared feel with other games) ===== */
-    .global-header {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 120;
-      padding: 10px 14px 12px;
-      background: linear-gradient(90deg, #020713ee, #041831ee);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid rgba(150, 208, 255, 0.3);
-    }
-    .header-row-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-    }
-    .header-left {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .header-logo {
-      height: 52px;
-      width: auto;
-      filter:
-        drop-shadow(0 0 8px var(--neon))
-        drop-shadow(0 0 18px var(--neon-soft));
-    }
-    .header-row-bottom {
-      margin-top: 6px;
-      text-align: center;
-    }
-    .page-title {
-      margin: 0;
-      font-size: 1.1rem;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: var(--text);
-      text-shadow: 0 0 8px var(--neon-soft);
-    }
-    .page-date {
-      display: block;
-      margin-top: 2px;
-      font-size: 0.82rem;
-      color: var(--neon-soft);
-      opacity: 0.9;
-    }
-    .howto-icon {
-      display: none;
-    }
-
-    .global-header #menu-btn {
-      background: rgba(0,0,0,.25);
-      border: 1.5px solid var(--neon);
-      color: var(--neon);
-      font-size: 1.3rem;
-      padding: 6px 12px;
-      border-radius: 12px;
-      cursor: pointer;
-      box-shadow: 0 0 10px var(--neon-soft);
-      transition: .18s;
-    }
-    .global-header #menu-btn:hover {
-      background: var(--neon);
-      color: #001;
-    }
-
-    .menu-dropdown {
-      position: absolute;
-      top: 60px;
-      left: 8px;
-      background: var(--bg2);
-      border: 1px solid var(--neon);
-      border-radius: 12px;
-      padding: 6px;
-      box-shadow: 0 0 18px var(--neon-soft);
-      min-width: 210px;
-      display: none;
-      flex-direction: column;
-      z-index: 200;
-    }
-    .menu-dropdown a {
-      display: block;
-      padding: 10px 12px;
-      color: var(--text);
-      text-decoration: none;
-      border-radius: 10px;
-      font-size: 0.95rem;
-      white-space: nowrap;
-    }
-    .menu-dropdown a:hover {
-      background: var(--neon);
-      color: #001;
-    }
-
-    body {
-      padding-top: 140px;
-    }
-    main {
-      display: grid;
-      place-items: center;
-      padding: 24px 16px 48px;
-    }
-
-    .quiz-shell {
-      width: min(960px, 100%);
-    }
-    .page-subtitle {
-      text-align: center;
-      margin: 0 0 8px;
-      font-size: 1rem;
-      color: var(--neon-soft);
-      opacity: 0.9;
-    }
-    .quiz-meta {
-      text-align: center;
-      font-size: 0.85rem;
-      margin-bottom: 14px;
-      opacity: 0.9;
-    }
-    .quiz-meta strong {
-      color: var(--neon-soft);
-    }
-
-    .quiz-container {
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      margin-bottom: 24px;
-    }
-
-    .question-card {
-      background: radial-gradient(circle at top left, #12335a 0, #020a16 55%);
-      border-radius: 16px;
-      padding: 14px 14px 10px;
-      border: 1px solid rgba(150, 208, 255, 0.35);
-      box-shadow:
-        0 0 12px rgba(0, 0, 0, 0.6),
-        0 0 18px rgba(55, 161, 255, 0.22);
-    }
-
-    .question-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      margin-bottom: 6px;
-      gap: 12px;
-    }
-    .question-number {
-      font-size: 0.82rem;
-      opacity: 0.85;
-    }
-    .question-text {
-      font-size: 0.95rem;
-      font-weight: 500;
-    }
-    .question-tag {
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      opacity: 0.7;
-    }
-
-    .options {
-      margin-top: 8px;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-    }
-    @media (max-width: 640px) {
-      .options {
-        grid-template-columns: 1fr;
-      }
-    }
-    .option-label {
-      border-radius: 999px;
-      border: 1px solid rgba(150, 208, 255, 0.3);
-      padding: 7px 10px;
-      font-size: 0.9rem;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      cursor: pointer;
-      background: rgba(3, 15, 34, 0.8);
-      transition: 0.06s ease-out;
-    }
-    .option-label:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 0 12px rgba(55, 161, 255, 0.45);
-      border-color: var(--neon-soft);
-    }
-    .option-label input { accent-color: var(--neon); }
-    .option-label.correct {
-      border-color: var(--good);
-      box-shadow: 0 0 14px rgba(56, 239, 125, 0.7);
-    }
-    .option-label.chosen-wrong {
-      border-color: var(--bad);
-      box-shadow: 0 0 14px rgba(255, 66, 102, 0.7);
-    }
-
-    .btn-question {
-      margin-top: 10px;
-      padding: 6px 14px;
-      border-radius: 999px;
-      border: 1px solid rgba(150, 208, 255, 0.7);
-      background: rgba(3, 15, 34, 0.95);
-      color: #e9f4ff;
-      font-size: 0.82rem;
-      cursor: pointer;
-    }
-
-    .feedback {
-      margin-top: 6px;
-      font-size: 0.82rem;
-      min-height: 16px;
-    }
-    .feedback.correct { color: var(--good); }
-    .feedback.incorrect { color: var(--bad); }
-
-    .small-hint {
-      font-size: 0.75rem;
-      opacity: 0.8;
-      margin-top: 4px;
-    }
-
-    .question-input {
-      margin-top: 8px;
-      width: 100%;
-      padding: 7px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(150, 208, 255, 0.6);
-      background: rgba(0, 8, 18, 0.85);
-      color: #e9f4ff;
-      font-size: 0.9rem;
-    }
-
-    .image-wrap {
-      margin-top: 10px;
-      text-align: center;
-    }
-    .image-wrap img {
-      max-width: 100%;
-      border-radius: 12px;
-      border: 1px solid rgba(150, 208, 255, 0.4);
-    }
-
-    /* Rank 1–3 inputs */
-    .rank-box {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin: 10px 0 6px;
-    }
-    .rank-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .rank-input {
-      width: 48px;
-      padding: 6px;
-      font-size: 0.9rem;
-      border-radius: 8px;
-      border: 1px solid rgba(150,208,255,0.4);
-      background: rgba(3,15,34,0.8);
-      color: #e9f4ff;
-    }
-
-    /* List self-score input */
-    .manual-score-wrap {
-      margin-top: 8px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 0.8rem;
-      flex-wrap: wrap;
-    }
-    .manual-score-wrap input {
-      width: 60px;
-      padding: 4px 6px;
-      border-radius: 999px;
-      border: 1px solid rgba(150, 208, 255, 0.6);
-      background: rgba(0, 8, 18, 0.85);
-      color: #e9f4ff;
-      font-size: 0.85rem;
-    }
-
-    /* Progress, score, share */
-    .progress-wrap {
-      max-width: 480px;
-      margin: 0 auto 10px;
-      text-align: left;
-      font-size: 0.85rem;
-      opacity: 0.9;
-    }
-    .progress-label {
-      margin-bottom: 4px;
-      display: flex;
-      justify-content: space-between;
-      gap: 8px;
-    }
-    .progress-bar-outer {
-      width: 100%;
-      height: 10px;
-      border-radius: 999px;
-      background: rgba(4, 20, 40, 0.9);
-      border: 1px solid rgba(150, 208, 255, 0.5);
-      overflow: hidden;
-    }
-    .progress-bar-inner {
-      height: 100%;
-      width: 0%;
-      border-radius: 999px;
-      background: linear-gradient(90deg, var(--neon-soft), var(--good));
-      box-shadow:
-        0 0 14px rgba(55, 161, 255, 0.7),
-        0 0 24px rgba(56, 239, 125, 0.7);
-      transition: width 0.15s ease-out;
-    }
-
-    .btn-secondary {
-      padding: 8px 16px;
-      border-radius: 999px;
-      border: 1px solid rgba(150, 208, 255, 0.6);
-      background: rgba(3, 15, 34, 0.9);
-      color: #e9f4ff;
-      font-size: 0.82rem;
-      cursor: pointer;
-      margin-top: 10px;
-    }
-    .btn-secondary:active { transform: translateY(1px); }
-
-    .score-box {
-      margin-top: 12px;
-      text-align: center;
-      font-size: 0.9rem;
-    }
-    .score-box .percent {
-      font-size: 1.4rem;
-      font-weight: 700;
-      margin-bottom: 4px;
-      color: var(--neon-soft);
-      text-shadow: 0 0 8px var(--neon-soft);
-    }
-    .score-box .raw {
-      font-size: 0.9rem;
-      opacity: 0.9;
-    }
-
-    .share-panel {
-      margin-top: 12px;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-    }
-    .share-buttons {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      justify-content: center;
-    }
-
-    .global-footer {
-      text-align: center;
-      padding: 12px 8px 20px;
-      font-size: 0.85rem;
-      color: var(--neon-soft);
-      opacity: 0.9;
-    }
-
-    @media (max-width: 480px) {
-      .header-logo { height: 44px; }
-      .page-title { font-size: 0.95rem; }
-      .quiz-shell { padding: 18px 14px; }
-    }
-  </style>
 </head>
-
 <body>
-  <!-- UNIVERSAL HEADER -->
-  <header class="global-header">
-    <div class="header-row-top">
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="header-row1">
       <div class="header-left">
         <button id="menu-btn">☰</button>
-        <img src="logo.png" class="header-logo" alt="Ben's Trivia Logo">
+        <div class="logo-wrap">
+          <img class="logo-img" src="narrow_logo.png" alt="Ben's Trivia logo" />
+        </div>
       </div>
-      <div class="howto-icon" id="howto-icon" style="display:none;">?</div>
+      <!-- no how-to icon on this page -->
     </div>
-
-    <div class="header-row-bottom">
-      <h1 class="page-title">The Big Fat Sunday Quiz</h1>
-      <span class="page-date" id="page-date"></span>
+    <div class="header-row2">
+      <h1 id="page-title" class="page-title"></h1>
     </div>
 
     <nav class="menu-dropdown" id="menu-dropdown">
@@ -423,715 +31,201 @@
     </nav>
   </header>
 
-  <!-- PAGE CONTENT -->
   <main>
-    <section class="game-card card quiz-shell">
-      <p class="page-subtitle">25 questions. One big quiz.</p>
-
-      <div id="quiz-meta" class="quiz-meta">
-        <strong id="quiz-title">General Knowledge – Big Fat Sunday Quiz</strong><br>
-        <span id="quiz-week-info">25 questions · Mixed formats · Auto-scored + self-scored specials</span>
+    <section class="game-card card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;color:var(--neon-soft)">
+        <div>Score: <strong id="score">0</strong></div>
+        <div>Question: <strong id="qnum">1</strong>/<span id="qtotal">4</span></div>
       </div>
-
-      <div class="quiz-container" id="quiz-container"></div>
-
-      <!-- PROGRESS BAR -->
-      <div class="progress-wrap">
-        <div class="progress-label">
-          <span>Progress</span>
-          <span id="progress-text">0 / 25 questions checked</span>
-        </div>
-        <div class="progress-bar-outer">
-          <div id="progress-bar" class="progress-bar-inner"></div>
-        </div>
+      <h2 id="question" style="margin:10px 0 14px;text-align:center">Loading…</h2>
+      <div id="answers" style="display:grid;gap:10px"></div>
+      <div class="feedback" id="feedback"></div>
+      <div class="toolbar" style="display:flex;gap:10px;justify-content:center;margin-top:12px">
+        <button class="btn" id="next" disabled>Next</button>
+        <button class="btn" id="restart" style="display:none">Play again</button>
       </div>
-
-      <button class="btn-secondary" id="jump-unanswered">
-        Show first unanswered question
-      </button>
-
-      <div class="score-box" id="score-box"></div>
-
-      <div class="share-panel" id="share-panel" style="display:none;">
-        <div class="share-buttons">
-          <button class="btn-secondary" id="share-whatsapp">Share via WhatsApp</button>
-          <button class="btn-secondary" id="copy-result">Copy result</button>
+      <div class="subtle" id="shareWrap" style="display:none">
+        Share your score:
+        <div style="display:flex;gap:8px;justify-content:center;margin-top:8px">
+          <button class="btn" id="shareWhats">WhatsApp</button>
+          <button class="btn" id="copyLink">Copy result</button>
         </div>
-        <div id="share-status" style="font-size:11px; opacity:0.8; margin-top:6px;"></div>
       </div>
     </section>
   </main>
 
-  <footer class="global-footer" id="footer-text"></footer>
+  <footer id="footerText"></footer>
 
   <script>
-    // HEADER DATE + FOOTER
-    (function setHeaderAndFooter() {
-      const today = new Date();
-      document.getElementById("page-date").textContent = today.toLocaleDateString(undefined, {
-        weekday: "long",
-        day: "numeric",
-        month: "long"
+    // ----- MENU -----
+    const menuBtn = document.getElementById('menu-btn');
+    const menuDrop = document.getElementById('menu-dropdown');
+    menuBtn.onclick = () =>
+      menuDrop.style.display = menuDrop.style.display === 'block' ? 'none' : 'block';
+    document.addEventListener('click', e => {
+      if (!menuBtn.contains(e.target) && !menuDrop.contains(e.target)) {
+        menuDrop.style.display = 'none';
+      }
+    });
+
+    const footer = document.getElementById('footerText');
+    const today  = new Date();
+
+    // Header title: Daily Trivia — Sunday, 23 November
+    const pageTitleEl = document.getElementById('page-title');
+    pageTitleEl.textContent =
+      'Daily Trivia — ' +
+      today.toLocaleDateString(undefined, {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long'
       });
-      document.getElementById("footer-text").textContent = "Made by Ben · " + today.toLocaleDateString(undefined, {
-        weekday: "long",
-        day: "numeric",
-        month: "long",
-        year: "numeric"
-      });
+
+    // ----- Trivia (daily) from JSON -----
+    (async function(){
+      const res  = await fetch('daily_content.json');
+      const data = await res.json();
+
+      // EASY TO UPDATE MONTHLY:
+      // On the 1st of each month, you can replace the trivia_sets
+      // inside daily_content.json with new questions.
+      // Keep the same structure so this logic still works.
+
+      const start    = new Date(data.start_date);
+      const diffDays = Math.floor((Date.now() - start) / 86400000);
+      const dayIndex = Math.max(0, diffDays);
+      const useIndex = Math.min(dayIndex, data.trivia_sets.length - 1);
+      const QUESTIONS = data.trivia_sets[useIndex].questions;
+
+      // Shared daily puzzle number (also used by Anagram, Riddle, Connections)
+      const puzzleNumber = dayIndex + 1;
+
+      footer.textContent = `Made by Ben · Puzzle No. ${puzzleNumber} · ${
+        today.toLocaleDateString(undefined, {
+          weekday: 'long',
+          day: 'numeric',
+          month: 'short',
+          year: 'numeric'
+        })
+      }`;
+
+      const qTotalEl   = document.getElementById('qtotal'),
+            qNumEl     = document.getElementById('qnum'),
+            scoreEl    = document.getElementById('score'),
+            questionEl = document.getElementById('question'),
+            answersEl  = document.getElementById('answers'),
+            feedbackEl = document.getElementById('feedback'),
+            nextBtn    = document.getElementById('next'),
+            restartBtn = document.getElementById('restart'),
+            shareWrap  = document.getElementById('shareWrap');
+
+      qTotalEl.textContent = QUESTIONS.length;
+
+      let idx   = 0;
+      let score = 0;
+      let locked = false;
+
+      function renderQuestion() {
+        const item = QUESTIONS[idx];
+        qNumEl.textContent    = idx + 1;
+        questionEl.textContent = item.q;
+        feedbackEl.textContent = "";
+        nextBtn.disabled       = true;
+        shareWrap.style.display = 'none';
+        restartBtn.style.display = 'none';
+        locked = false;
+
+        answersEl.innerHTML = "";
+        item.choices.forEach((text, i) => {
+          const b = document.createElement('button');
+          b.className   = 'btn';
+          b.style.width = '100%';
+          b.textContent = text;
+          b.onclick     = () => pickAnswer(i);
+          answersEl.appendChild(b);
+        });
+      }
+
+      function pickAnswer(choice) {
+        if (locked) return;
+        locked = true;
+
+        const correct = QUESTIONS[idx].answer;
+        [...answersEl.querySelectorAll('button')].forEach((b, i) => {
+          if (i === correct) {
+            b.style.background   = 'var(--good)';
+            b.style.color        = '#001';
+            b.style.borderColor  = 'var(--good)';
+            b.style.boxShadow    = '0 0 22px var(--good)';
+          } else if (i === choice) {
+            b.style.background   = 'var(--bad)';
+            b.style.color        = '#001';
+            b.style.borderColor  = 'var(--bad)';
+            b.style.boxShadow    = '0 0 22px var(--bad)';
+          } else {
+            b.style.opacity = .6;
+          }
+          b.disabled = true;
+        });
+
+        if (choice === correct) {
+          score++;
+          scoreEl.textContent = score;
+          feedbackEl.textContent = '✅ Correct!';
+        } else {
+          feedbackEl.textContent = '❌ Not quite.';
+        }
+        nextBtn.disabled = false;
+      }
+
+      function nextQuestion() {
+        if (idx < QUESTIONS.length - 1) {
+          idx++;
+          renderQuestion();
+        } else {
+          endGame();
+        }
+      }
+
+      function endGame() {
+        questionEl.textContent = '🎉 All done!';
+        answersEl.innerHTML = '';
+        feedbackEl.innerHTML =
+          `Final score: <strong>${score}</strong> / ${QUESTIONS.length}`;
+        nextBtn.disabled = true;
+        restartBtn.style.display = 'inline-block';
+        shareWrap.style.display  = 'block';
+      }
+
+      function restart() {
+        idx = 0;
+        score = 0;
+        scoreEl.textContent = score;
+        renderQuestion();
+      }
+
+      nextBtn.onclick    = nextQuestion;
+      restartBtn.onclick = restart;
+
+      function shareText() {
+        const pct = Math.round((score / QUESTIONS.length) * 100);
+        return `Ben's Trivia — I scored ${score}/${QUESTIONS.length} (${pct}%). Play: ${location.href}`;
+      }
+
+      document.getElementById('shareWhats').onclick = () =>
+        window.open(`https://wa.me/?text=${encodeURIComponent(shareText())}`,'_blank');
+
+      document.getElementById('copyLink').onclick = async () => {
+        try {
+          await navigator.clipboard.writeText(shareText());
+          alert('Result copied!');
+        } catch {
+          alert('Copy failed.');
+        }
+      };
+
+      renderQuestion();
     })();
-
-    // MENU
-    const menuBtn = document.getElementById("menu-btn");
-    const menuDropdown = document.getElementById("menu-dropdown");
-    menuBtn.addEventListener("click", () => {
-      const isOpen = menuDropdown.style.display === "flex";
-      menuDropdown.style.display = isOpen ? "none" : "flex";
-    });
-    document.addEventListener("click", (e) => {
-      if (!menuDropdown.contains(e.target) && !menuBtn.contains(e.target)) {
-        menuDropdown.style.display = "none";
-      }
-    });
-
-    // ------------- QUESTION DATA (25 total) -------------
-    const questions = [
-            // MS PAINT MOVIE POSTER – generic self-mark
-      [
-{
-id: "spanish-steps",
-type: "mcq",
-tag: "Geography",
-text: "In which city are the Spanish Steps?",
-options: ["Paris", "Athens", "Madrid", "Rome"],
-correctIndex: 3,
-maxPoints: 1
-},
-{
-id: "jerk-cooking",
-type: "mcq",
-tag: "Food",
-text: "Jerk cooking originated in which country?",
-options: ["Mexico", "Jamaica", "Cuba", "Brazil"],
-correctIndex: 1,
-maxPoints: 1
-},
-{
-id: "anagram-honestly",
-type: "text-exact",
-tag: "Wordplay",
-text: "Which word meaning 'genuinely' is an anagram of 'on the sly'?",
-correctAnswer: "honestly",
-maxPoints: 1
-
-},
-{
-id: "non-consecutive-president",
-type: "mcq",
-tag: "Politics",
-text: "Before Donald Trump, who was the only US president to have won non-consecutive terms?",
-options: ["Theodore Roosevelt", "Grover Cleveland", "Woodrow Wilson", "Ulysses S. Grant"],
-correctIndex: 1,
-maxPoints: 1
-},
-{
-id: "at-symbol",
-type: "mcq",
-tag: "General knowledge",
-text: "The @ symbol shares a key with which number on a standard keyboard?",
-options: ["1", "2", "3", "4"],
-correctIndex: 1,
-maxPoints: 1
-},
-{
-id: "palindrome",
-type: "text-exact",
-tag: "Wordplay",
-text: "What is a word, phrase or number that reads the same forwards and backwards?",
-correctAnswer: "palindrome",
-maxPoints: 1
-
-},
-{
-id: "braxton-hicks",
-type: "mcq",
-tag: "Biology",
-text: "“False” contractions that can occur in pregnancy are known as Braxton ... what?",
-options: ["Hicks", "Jones", "Marks", "Wells"],
-correctIndex: 0,
-maxPoints: 1
-},
-{
-id: "attorney-general-plural",
-type: "mcq",
-tag: "Language",
-text: "What is the plural of attorney-general?",
-options: ["Attorney-generals", "Attorneys-general", "Attorney generals", "Attornies-general"],
-correctIndex: 1,
-maxPoints: 1
-},
-{
-id: "nasal-septum",
-type: "text-exact",
-tag: "Biology",
-text: "Name the cartilage wall separating the nostrils.",
-correctAnswer: "Septum",
-
-maxPoints: 1
-},
-{
-id: "scarface-thriller-year",
- type: "year",
-tag: "Year",
-text: "In what year was the movie Scarface released, did the album Thriller reach number 1 in the USA, and was Andrew Garfield born?",
-correctYear: 1983,
-maxPoints: 2
-
-},
-{
-id: "manx",
-type: "mcq",
-tag: "Geography",
-text: "Manx is a historical language of which Crown dependency?",
-options: ["Jersey", "Guernsey", "Isle of Man", "Gibraltar"],
-correctIndex: 2,
-maxPoints: 1
-},
-{
-id: "womens-tennis",
-type: "mcq",
-tag: "Sport",
-text: "Who is currently ranked No. 1 in women’s singles tennis?",
-options: ["Iga Świątek", "Aryna Sabalenka", "Coco Gauff", "Elena Rybakina"],
-correctIndex: 1,
-maxPoints: 1
-},
-{
-id: "neptune-visible",
-type: "mcq",
-tag: "Science",
-text: "Is Neptune visible to the naked eye?",
-options: ["True", "False"],
-correctIndex: 1,
-maxPoints: 1
-},
-{
-id: "third-man",
-type: "mcq",
-tag: "Movies",
-text: "Which 1949 film features Orson Welles as Harry Lime?",
-options: ["Casablanca", "The Third Man", "Citizen Kane", "Rebecca"],
-correctIndex: 1,
-maxPoints: 1
-},
-{
-id: "azure-colour",
-type: "mcq",
-tag: "General knowledge",
-text: "What shade is azure?",
-options: ["Green", "Purple", "Blue", "Red"],
-correctIndex: 2,
-maxPoints: 1
-},
-{
-id: "draco-malfoy",
-type: "mcq",
-tag: "Movies",
-text: "In which Harry Potter film does Draco Malfoy have the most screen time in minutes from the first 3 movies?",
-options: ["Philosopher's Stone", "Chamber of Secrets", "Prisoner of Azkeban"],
-correctIndex: 1,
-maxPoints: 1
-},
-{
-id: "ted-talks",
-type: "text-exact",
-tag: "General knowledge",
-text: "What does the 'D' in TED Talks stand for?",
-correctAnswer: "Design",
-
-maxPoints: 1
-},
-{
-id: "coachella-latina",
-
-tag: "Music",
-text: "Who was the first Latina to headline Coachella just recently?",
-correctAnswer: "Karol G",
-
-maxPoints: 1
-},
-{
-id: "first-ebay-item",
-type: "mcq",
-tag: "Tech",
-text: "What was the first object sold on eBay?",
-options: [ "Toy Car", "Trench Coat", "Book","Broken laser pointer"],
-correctIndex: 3,
-maxPoints: 1
-},
-{
-id: "least-dense-asia",
-type: "mcq",
-tag: "Geography",
-text: "Which Asian country is the least densely populated with just 2 people per square km?",
-options: ["Mongolia", "Kazakhstan", ""Laos", "Uzbekistan"],
-correctIndex: 0,
-maxPoints: 1
-},
-{
-id: "moon-mission",
-type: "mcq",
-tag: "Space",
-text: "What was the name of the recent mission that sent 4 astronauts around the Moon?",
-options: ["Pioneer IV", "Artemis II", "Apollo 13", "Orion I"],
-correctIndex: 1,
-maxPoints: 1
-},
-{
-id: "dead-body-line",
-type: "text-exact",
-tag: "Movies",
-text: "Which movie opens with the line 'I was 12 going on 13 the first time I saw a dead human being?",
-correctAnswer: "Stand by me",
-
-maxPoints: 1
-},
-{
-id: "pixar-dvd",
-type: "mcq",
-tag: "Movies",
-text: "Which Pixar movie is the best-selling DVD of all time?",
-options: ["Finding Nemo", "Toy Story", "The Incredibles", "Cars"],
-correctIndex: 0,
-maxPoints: 1
-}
-]
-;
-
-    // ------------- STATE -------------
-    const questionStates = questions.map(q => ({
-      checked: false,
-      points: 0,
-      maxPoints: q.maxPoints
-    }));
-
-    const quizContainer = document.getElementById("quiz-container");
-    const scoreBox = document.getElementById("score-box");
-    const sharePanel = document.getElementById("share-panel");
-    const shareStatus = document.getElementById("share-status");
-    const progressTextEl = document.getElementById("progress-text");
-    const progressBarEl = document.getElementById("progress-bar");
-    const jumpUnansweredBtn = document.getElementById("jump-unanswered");
-
-    const TOTAL_QUESTIONS = questions.length;
-    const MAX_POINTS = questionStates.reduce((sum, s) => sum + s.maxPoints, 0);
-
-    // ------------- RENDERING -------------
-    function renderQuiz() {
-      quizContainer.innerHTML = "";
-      questions.forEach((q, index) => {
-        const card = document.createElement("article");
-        card.className = "question-card";
-        card.id = `card-${index}`;
-
-        const header = document.createElement("div");
-        header.className = "question-header";
-
-        const qNumber = document.createElement("div");
-        qNumber.className = "question-number";
-        qNumber.textContent = `Question ${index + 1}`;
-
-        const qText = document.createElement("div");
-        qText.className = "question-text";
-        qText.textContent = q.text;
-
-        header.appendChild(qNumber);
-        header.appendChild(qText);
-
-        if (q.tag) {
-          const tag = document.createElement("div");
-          tag.className = "question-tag";
-          tag.textContent = q.tag;
-          header.appendChild(tag);
-        }
-
-        card.appendChild(header);
-
-        // type-specific UI
-        if (q.type === "mcq") {
-          const optionsWrap = document.createElement("div");
-          optionsWrap.className = "options";
-          q.options.forEach((optText, optIndex) => {
-            const id = `q${index}_opt${optIndex}`;
-            const label = document.createElement("label");
-            label.className = "option-label";
-            label.setAttribute("for", id);
-            label.dataset.q = index;
-            label.dataset.opt = optIndex;
-
-            const input = document.createElement("input");
-            input.type = "radio";
-            input.name = `q${index}`;
-            input.id = id;
-            input.value = optIndex;
-
-            const span = document.createElement("span");
-            span.textContent = optText;
-
-            label.appendChild(input);
-            label.appendChild(span);
-            optionsWrap.appendChild(label);
-          });
-          card.appendChild(optionsWrap);
-        } else if (q.type === "text-exact" || q.type === "numeric" || q.type === "year") {
-          const input = document.createElement("input");
-          input.type = "text";
-          input.className = "question-input";
-          input.id = `input-${index}`;
-          input.placeholder = (q.type === "year" || q.type === "numeric") ? "Enter a number…" : "Type your answer…";
-          card.appendChild(input);
-        } else if (q.type === "self-text-image") {
-          if (q.image) {
-            const imgWrap = document.createElement("div");
-            imgWrap.className = "image-wrap";
-            const img = document.createElement("img");
-            img.src = q.image;
-            img.alt = "Question image";
-            imgWrap.appendChild(img);
-            card.appendChild(imgWrap);
-          }
-          const input = document.createElement("input");
-          input.type = "text";
-          input.className = "question-input";
-          input.id = `input-${index}`;
-          input.placeholder = "Type your guess (you'll self-mark)…";
-          card.appendChild(input);
-          const hint = document.createElement("div");
-          hint.className = "small-hint";
-          hint.textContent = "Tap 'Reveal answer' then choose if you were right.";
-          card.appendChild(hint);
-        } else if (q.type === "list-manual") {
-          const hint = document.createElement("div");
-          hint.className = "small-hint";
-          hint.textContent = "Write your answers first. Reveal the list, then enter how many you got right (1 point per planet).";
-          card.appendChild(hint);
-        } else if (q.type === "rank") {
-          const box = document.createElement("div");
-          box.className = "rank-box";
-          q.items.forEach((labelText, i) => {
-            const row = document.createElement("div");
-            row.className = "rank-row";
-            row.innerHTML = `
-              <input type="number" min="1" max="${q.items.length}" class="rank-input" data-index="${i}">
-              <span class="rank-label">${labelText}</span>
-            `;
-            box.appendChild(row);
-          });
-          card.appendChild(box);
-        }
-
-        // buttons
-        if (q.type === "self-text-image" || q.type === "list-manual") {
-          const revealBtn = document.createElement("button");
-          revealBtn.className = "btn-question";
-          revealBtn.type = "button";
-          revealBtn.textContent = "Reveal answer";
-          revealBtn.addEventListener("click", () => revealSelfMarked(index));
-          card.appendChild(revealBtn);
-        } else {
-          const checkBtn = document.createElement("button");
-          checkBtn.className = "btn-question";
-          checkBtn.type = "button";
-          checkBtn.textContent = "Check answer";
-          checkBtn.addEventListener("click", () => checkStandardQuestion(index));
-          card.appendChild(checkBtn);
-        }
-
-        const feedback = document.createElement("div");
-        feedback.className = "feedback";
-        feedback.id = `feedback-${index}`;
-        card.appendChild(feedback);
-
-        if (q.type === "self-text-image") {
-          const selfButtons = document.createElement("div");
-          selfButtons.className = "manual-score-wrap";
-          const correctBtn = document.createElement("button");
-          correctBtn.type = "button";
-          correctBtn.className = "btn-secondary";
-          correctBtn.textContent = "I got it right";
-          correctBtn.addEventListener("click", () => {
-            questionStates[index].checked = true;
-            questionStates[index].points = q.maxPoints;
-            feedback.textContent = `Nice! You’ve given yourself ${q.maxPoints} point${q.maxPoints !== 1 ? "s" : ""}.`;
-            feedback.classList.remove("incorrect");
-            feedback.classList.add("correct");
-            updateScoreAndProgress();
-          });
-          const wrongBtn = document.createElement("button");
-          wrongBtn.type = "button";
-          wrongBtn.className = "btn-secondary";
-          wrongBtn.textContent = "I got it wrong";
-          wrongBtn.addEventListener("click", () => {
-            questionStates[index].checked = true;
-            questionStates[index].points = 0;
-            feedback.textContent = "Marked as 0 points.";
-            feedback.classList.remove("correct");
-            feedback.classList.add("incorrect");
-            updateScoreAndProgress();
-          });
-          selfButtons.appendChild(correctBtn);
-          selfButtons.appendChild(wrongBtn);
-          card.appendChild(selfButtons);
-        } else if (q.type === "list-manual") {
-          const manual = document.createElement("div");
-          manual.className = "manual-score-wrap";
-          manual.innerHTML = `
-            <span>How many did you get right?</span>
-            <input type="number" min="0" max="${q.maxPoints}" id="manual-${index}" value="0" />
-            <button type="button" class="btn-secondary">Save score</button>
-          `;
-          const btn = manual.querySelector("button");
-          btn.addEventListener("click", () => {
-            const inputEl = manual.querySelector("input");
-            let val = parseInt(inputEl.value, 10);
-            if (isNaN(val) || val < 0) val = 0;
-            if (val > q.maxPoints) val = q.maxPoints;
-            inputEl.value = val;
-            questionStates[index].checked = true;
-            questionStates[index].points = val;
-            feedback.textContent = `Saved ${val} point${val !== 1 ? "s" : ""} for this question.`;
-            feedback.classList.remove("incorrect");
-            feedback.classList.add("correct");
-            updateScoreAndProgress();
-          });
-          card.appendChild(manual);
-        }
-
-        quizContainer.appendChild(card);
-      });
-    }
-
-    renderQuiz();
-
-    // ------------- CHECKING LOGIC -------------
-    function checkStandardQuestion(index) {
-      const q = questions[index];
-      const feedback = document.getElementById(`feedback-${index}`);
-      const card = document.getElementById(`card-${index}`);
-      feedback.classList.remove("correct", "incorrect");
-
-      if (q.type === "mcq") {
-        const selected = document.querySelector(`input[name="q${index}"]:checked`);
-        const labels = document.querySelectorAll(`label.option-label[data-q="${index}"]`);
-        labels.forEach(l => l.classList.remove("correct", "chosen-wrong"));
-
-        if (!selected) {
-          feedback.textContent = "Choose an answer first 😊";
-          return;
-        }
-        const chosen = Number(selected.value);
-        const correct = q.correctIndex;
-
-        labels.forEach(label => {
-          const opt = Number(label.dataset.opt);
-          if (opt === correct) {
-            label.classList.add("correct");
-          } else if (opt === chosen && chosen !== correct) {
-            label.classList.add("chosen-wrong");
-          }
-        });
-
-        if (chosen === correct) {
-          feedback.textContent = "Correct! 🎉";
-          feedback.classList.add("correct");
-          questionStates[index].points = q.maxPoints;
-        } else {
-          feedback.textContent = `Incorrect – correct answer: ${q.options[correct]}`;
-          feedback.classList.add("incorrect");
-          questionStates[index].points = 0;
-        }
-        questionStates[index].checked = true;
-      } else if (q.type === "text-exact") {
-        const input = document.getElementById(`input-${index}`);
-        const normalise = (str) =>
-          (str || "").toLowerCase().replace(/[^a-z0-9]/g, "").trim();
-        const user = normalise(input.value);
-        const correct = normalise(q.correctAnswer);
-        if (!user) {
-          feedback.textContent = "Type an answer first 😊";
-          return;
-        }
-        if (user === correct) {
-          feedback.textContent = "Correct! 🎉";
-          feedback.classList.add("correct");
-          questionStates[index].points = q.maxPoints;
-        } else {
-          feedback.textContent = `Incorrect – correct answer: ${q.correctAnswer}`;
-          feedback.classList.add("incorrect");
-          questionStates[index].points = 0;
-        }
-        questionStates[index].checked = true;
-      } else if (q.type === "numeric") {
-        const input = document.getElementById(`input-${index}`);
-        const val = parseInt(input.value, 10);
-        if (isNaN(val)) {
-          feedback.textContent = "Enter a number first 😊";
-          return;
-        }
-        if (val === q.correctNumber) {
-          feedback.textContent = "Correct! 🎉";
-          feedback.classList.add("correct");
-          questionStates[index].points = q.maxPoints;
-        } else {
-          feedback.textContent = `Incorrect – correct answer: ${q.correctNumber}`;
-          feedback.classList.add("incorrect");
-          questionStates[index].points = 0;
-        }
-        questionStates[index].checked = true;
-      } else if (q.type === "year") {
-        const input = document.getElementById(`input-${index}`);
-        const val = parseInt(input.value, 10);
-        if (isNaN(val)) {
-          feedback.textContent = "Enter a year first 😊";
-          return;
-        }
-        const diff = Math.abs(val - q.correctYear);
-        let pts = 0;
-        if (diff === 0) pts = 2;
-        else if (diff === 1) pts = 1;
-
-        if (pts === 2) {
-          feedback.textContent = "Bang on! 🎉 +2 points";
-          feedback.classList.add("correct");
-        } else if (pts === 1) {
-          feedback.textContent = `Close! The correct year is ${q.correctYear}. +1 point`;
-          feedback.classList.add("correct");
-        } else {
-          feedback.textContent = `Incorrect – correct year: ${q.correctYear}`;
-          feedback.classList.add("incorrect");
-        }
-        questionStates[index].points = pts;
-        questionStates[index].checked = true;
-      } else if (q.type === "rank") {
-        const inputs = card.querySelectorAll(".rank-input");
-        let allValid = true;
-        let correct = true;
-
-        inputs.forEach((input, i) => {
-          const val = Number(input.value);
-          if (!val || val < 1 || val > q.items.length) allValid = false;
-          if (val !== q.correctRanks[i]) correct = false;
-        });
-
-        if (!allValid) {
-          feedback.textContent = `Enter numbers 1–${q.items.length} beside each title.`;
-          feedback.classList.add("incorrect");
-          return;
-        }
-
-        if (correct) {
-          feedback.textContent = "Correct! 🎉";
-          feedback.classList.add("correct");
-          questionStates[index].points = q.maxPoints;
-        } else {
-          feedback.textContent = "Not quite – the correct order is 1) Lord of the Rings, 2) Harry Potter, 3) King James Bible.";
-          feedback.classList.add("incorrect");
-          questionStates[index].points = 0;
-        }
-        questionStates[index].checked = true;
-      }
-
-      updateScoreAndProgress();
-    }
-
-    function revealSelfMarked(index) {
-      const q = questions[index];
-      const feedback = document.getElementById(`feedback-${index}`);
-      feedback.classList.remove("correct", "incorrect");
-      if (q.type === "list-manual") {
-        feedback.textContent = `Planets with rings: ${q.correctItems.join(", ")}.`;
-      } else {
-        feedback.textContent = `Answer: ${q.answerText}`;
-      }
-    }
-
-    // ------------- SCORE + PROGRESS -------------
-    let lastPoints = 0;
-    let lastPercent = 0;
-
-    function updateScoreAndProgress() {
-      const totalPoints = questionStates.reduce((sum, s) => sum + s.points, 0);
-      const answered = questionStates.reduce((count, s) => count + (s.checked ? 1 : 0), 0);
-      const progressPercent = Math.round((answered / TOTAL_QUESTIONS) * 100);
-      const percentScore = Math.round((totalPoints / MAX_POINTS) * 100);
-
-      lastPoints = totalPoints;
-      lastPercent = percentScore;
-
-      progressTextEl.textContent = `${answered} / ${TOTAL_QUESTIONS} questions checked`;
-      progressBarEl.style.width = progressPercent + "%";
-
-      scoreBox.innerHTML = `
-        <div class="percent">${percentScore}%</div>
-        <div class="raw">Currently ${totalPoints} out of ${MAX_POINTS} points</div>
-      `;
-
-      if (answered > 0) {
-        sharePanel.style.display = "flex";
-      } else {
-        sharePanel.style.display = "none";
-      }
-    }
-
-    updateScoreAndProgress();
-
-    // UNANSWERED BUTTON
-    jumpUnansweredBtn.addEventListener("click", () => {
-      let targetIndex = questionStates.findIndex(s => !s.checked);
-      if (targetIndex === -1) {
-        shareStatus.textContent = "You've checked every question – nice! 🎉";
-        sharePanel.style.display = "flex";
-        return;
-      }
-      const card = document.getElementById(`card-${targetIndex}`);
-      if (card) {
-        card.scrollIntoView({ behavior: "smooth", block: "center" });
-        card.style.outline = "2px solid var(--neon)";
-        setTimeout(() => { card.style.outline = "none"; }, 1400);
-      }
-    });
-
-    // SHARING
-    const shareWhatsAppBtn = document.getElementById("share-whatsapp");
-    const copyResultBtn = document.getElementById("copy-result");
-
-    function buildShareText() {
-      const baseLines = [
-        `I just played "The Big Fat Sunday Quiz" on Ben's Trivia!`,
-        ``,
-        `My score: ${lastPoints}/${MAX_POINTS} (${lastPercent}%)`,
-        ``,
-        `Try to beat my score:`,
-        window.location.href
-      ];
-      return baseLines.join("\n");
-    }
-
-    shareWhatsAppBtn.addEventListener("click", () => {
-      const text = buildShareText();
-      const url = "https://wa.me/?text=" + encodeURIComponent(text);
-      window.open(url, "_blank");
-    });
-
-    copyResultBtn.addEventListener("click", async () => {
-      const text = buildShareText();
-      try {
-        await navigator.clipboard.writeText(text);
-        shareStatus.textContent = "Copied! Paste into Messenger, Instagram, SMS, etc.";
-      } catch (err) {
-        shareStatus.textContent = "Couldn't copy automatically – select and copy manually.";
-      }
-    });
   </script>
 </body>
 </html>
