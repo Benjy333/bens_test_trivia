@@ -202,7 +202,7 @@
     maxPoints: 1
   },
   {
-    id: "akubra-pelts",
+    id: "akubra",
     type: "text-exact",
     tag: "Animals",
     text: "What is a female elephant called?",
