@@ -456,10 +456,226 @@ maxPoints: 1
 
     },
   
+  {
+  "title": "Big Fat Sunday Quiz #3",
+  "questions": [
+
     {
-      "title": "Big Fat Sunday Quiz #3",
-      "questions": []
+      "id": "capital-canada",
+      "type": "mcq",
+      "tag": "Geography",
+      "text": "What is the capital of Canada?",
+      "options": ["Toronto", "Ottawa", "Vancouver", "Montreal"],
+      "correctIndex": 1,
+      "maxPoints": 1
     },
+    {
+      "id": "bohemian-rhapsody",
+      "type": "mcq",
+      "tag": "Music",
+      "text": "Which band released 'Bohemian Rhapsody'?",
+      "options": ["The Beatles", "Queen", "ABBA", "Pink Floyd"],
+      "correctIndex": 1,
+      "maxPoints": 1
+    },
+    {
+      "id": "largest-ocean",
+      "type": "mcq",
+      "tag": "Geography",
+      "text": "What is the largest ocean on Earth?",
+      "options": ["Atlantic", "Indian", "Pacific", "Arctic"],
+      "correctIndex": 2,
+      "maxPoints": 1
+    },
+    {
+      "id": "fastest-land-animal",
+      "type": "text-exact",
+      "tag": "Animals",
+      "text": "What is the fastest land animal?",
+      "correctAnswer": "cheetah",
+      "maxPoints": 1
+    },
+    {
+      "id": "h2o",
+      "type": "text-exact",
+      "tag": "Science",
+      "text": "What is the chemical name for H2O?",
+      "correctAnswer": "water",
+      "maxPoints": 1
+    },
+    {
+      "id": "olympic-rings",
+      "type": "numeric",
+      "tag": "Sport",
+      "text": "How many rings are on the Olympic flag?",
+      "correctNumber": 5,
+      "maxPoints": 1
+    },
+    {
+      "id": "facebook-founder",
+      "type": "mcq",
+      "tag": "Tech",
+      "text": "Who founded Facebook?",
+      "options": ["Elon Musk", "Mark Zuckerberg", "Bill Gates", "Jeff Bezos"],
+      "correctIndex": 1,
+      "maxPoints": 1
+    },
+    {
+      "id": "great-wall-visible",
+      "type": "mcq",
+      "tag": "Myths",
+      "text": "Can the Great Wall of China be seen from space with the naked eye?",
+      "options": ["True", "False"],
+      "correctIndex": 1,
+      "maxPoints": 1
+    },
+    {
+      "id": "harry-potter-author",
+      "type": "text-exact",
+      "tag": "Books",
+      "text": "Who wrote the Harry Potter series?",
+      "correctAnswer": "jk rowling",
+      "maxPoints": 1
+    },
+    {
+      "id": "light-speed",
+      "type": "numeric",
+      "tag": "Science",
+      "text": "What is the speed of light rounded to the nearest 100,000 km/s?",
+      "correctNumber": 300000,
+      "maxPoints": 1
+    },
+
+    {
+      "id": "nike-logo",
+      "type": "text-exact",
+      "tag": "Brand",
+      "text": "What is the name of the Nike logo?",
+      "correctAnswer": "swoosh",
+      "maxPoints": 1
+    },
+    {
+      "id": "big-ben",
+      "type": "mcq",
+      "tag": "Landmarks",
+      "text": "Big Ben is located in which city?",
+      "options": ["Paris", "London", "Dublin", "Berlin"],
+      "correctIndex": 1,
+      "maxPoints": 1
+    },
+    {
+      "id": "planet-red",
+      "type": "mcq",
+      "tag": "Space",
+      "text": "Which planet is known as the Red Planet?",
+      "options": ["Venus", "Mars", "Jupiter", "Mercury"],
+      "correctIndex": 1,
+      "maxPoints": 1
+    },
+    {
+      "id": "shakespeare-play",
+      "type": "text-exact",
+      "tag": "Literature",
+      "text": "Who wrote 'Romeo and Juliet'?",
+      "correctAnswer": "shakespeare",
+      "maxPoints": 1
+    },
+    {
+      "id": "largest-animal",
+      "type": "text-exact",
+      "tag": "Animals",
+      "text": "What is the largest animal in the world?",
+      "correctAnswer": "blue whale",
+      "maxPoints": 1
+    },
+
+    {
+      "id": "earth-continents",
+      "type": "numeric",
+      "tag": "Geography",
+      "text": "How many continents are there?",
+      "correctNumber": 7,
+      "maxPoints": 1
+    },
+    {
+      "id": "currency-japan",
+      "type": "text-exact",
+      "tag": "Economics",
+      "text": "What currency is used in Japan?",
+      "correctAnswer": "yen",
+      "maxPoints": 1
+    },
+    {
+      "id": "google-founded",
+      "type": "year",
+      "tag": "Tech",
+      "text": "In what year was Google founded?",
+      "correctYear": 1998,
+      "maxPoints": 2
+    },
+    {
+      "id": "fast-food-chain",
+      "type": "mcq",
+      "tag": "Food",
+      "text": "Which fast food chain has the most locations worldwide?",
+      "options": ["McDonald's", "Subway", "KFC", "Burger King"],
+      "correctIndex": 1,
+      "maxPoints": 1
+    },
+    {
+      "id": "einstein-born",
+      "type": "mcq",
+      "tag": "History",
+      "text": "In which country was Albert Einstein born?",
+      "options": ["USA", "Germany", "Austria", "Switzerland"],
+      "correctIndex": 1,
+      "maxPoints": 1
+    },
+
+    {
+      "id": "prime-minister-uk",
+      "type": "text-exact",
+      "tag": "Politics",
+      "text": "What is the title of the leader of the UK government?",
+      "correctAnswer": "prime minister",
+      "maxPoints": 1
+    },
+    {
+      "id": "volcano-magma",
+      "type": "text-exact",
+      "tag": "Science",
+      "text": "What is molten rock called when it is below the Earth's surface?",
+      "correctAnswer": "magma",
+      "maxPoints": 1
+    },
+    {
+      "id": "olympics-frequency",
+      "type": "numeric",
+      "tag": "Sport",
+      "text": "How many years between Summer Olympic Games?",
+      "correctNumber": 4,
+      "maxPoints": 1
+    },
+    {
+      "id": "longest-river",
+      "type": "mcq",
+      "tag": "Geography",
+      "text": "What is the longest river in the world?",
+      "options": ["Amazon", "Nile", "Yangtze", "Mississippi"],
+      "correctIndex": 1,
+      "maxPoints": 1
+    },
+    {
+      "id": "binary-10",
+      "type": "text-exact",
+      "tag": "Tech",
+      "text": "What number is '10' in binary in decimal?",
+      "correctAnswer": "2",
+      "maxPoints": 1
+    }
+
+  ]
+},
     {
       "title": "Big Fat Sunday Quiz #4",
       "questions": []
