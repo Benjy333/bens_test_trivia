@@ -1,0 +1,64 @@
+{
+  "start_date": "2026-05-03",
+  "weekly_quizzes": [
+    {
+      "title": "Big Fat Sunday Quiz #1",
+      "questions": [
+        {
+          "id": "eiffel-height",
+          "type": "mcq",
+          "tag": "Geography",
+          "text": "Approximately how tall is the Eiffel Tower?",
+          "options": ["150m", "330m", "500m", "720m"],
+          "correctIndex": 1,
+          "explanation": "The Eiffel Tower is about 330 metres tall including antennas.",
+          "maxPoints": 1
+        },
+        {
+          "id": "google-founded",
+          "type": "year",
+          "tag": "Tech",
+          "text": "In what year was Google founded?",
+          "correctYear": 1998,
+          "maxPoints": 2
+        }
+      ]
+    },
+    {
+      "title": "Big Fat Sunday Quiz #2",
+      "questions": []
+    },
+    {
+      "title": "Big Fat Sunday Quiz #3",
+      "questions": []
+    },
+    {
+      "title": "Big Fat Sunday Quiz #4",
+      "questions": []
+    },
+    {
+      "title": "Big Fat Sunday Quiz #5",
+      "questions": []
+    },
+    {
+      "title": "Big Fat Sunday Quiz #6",
+      "questions": []
+    },
+    {
+      "title": "Big Fat Sunday Quiz #7",
+      "questions": []
+    },
+    {
+      "title": "Big Fat Sunday Quiz #8",
+      "questions": []
+    },
+    {
+      "title": "Big Fat Sunday Quiz #9",
+      "questions": []
+    },
+    {
+      "title": "Big Fat Sunday Quiz #10",
+      "questions": []
+    }
+  ]
+}
