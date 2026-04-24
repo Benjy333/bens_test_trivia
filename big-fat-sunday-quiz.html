@@ -464,693 +464,194 @@
 
   <footer class="global-footer" id="footer-text"></footer>
 
-  <script>
-    // HEADER DATE + FOOTER
-    (function setHeaderAndFooter() {
-      const today = new Date();
-      document.getElementById("page-date").textContent = today.toLocaleDateString(undefined, {
-        weekday: "long",
-        day: "numeric",
-        month: "long"
-      });
-      document.getElementById("footer-text").textContent = "Made by Ben · " + today.toLocaleDateString(undefined, {
-        weekday: "long",
-        day: "numeric",
-        month: "long",
-        year: "numeric"
-      });
-    })();
+<script>
+/* ---------------- HEADER + MENU (UNCHANGED) ---------------- */
+(function setHeaderAndFooter() {
+  const today = new Date();
+  document.getElementById("page-date").textContent = today.toLocaleDateString(undefined, {
+    weekday: "long",
+    day: "numeric",
+    month: "long"
+  });
+  document.getElementById("footer-text").textContent = "Made by Ben · " + today.toLocaleDateString(undefined, {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric"
+  });
+})();
 
-    // MENU
-    const menuBtn = document.getElementById("menu-btn");
-    const menuDropdown = document.getElementById("menu-dropdown");
-    menuBtn.addEventListener("click", () => {
-      const isOpen = menuDropdown.style.display === "flex";
-      menuDropdown.style.display = isOpen ? "none" : "flex";
-    });
-    document.addEventListener("click", (e) => {
-      if (!menuDropdown.contains(e.target) && !menuBtn.contains(e.target)) {
-        menuDropdown.style.display = "none";
-      }
-    });
+const menuBtn = document.getElementById("menu-btn");
+const menuDropdown = document.getElementById("menu-dropdown");
+menuBtn.addEventListener("click", () => {
+  menuDropdown.style.display = menuDropdown.style.display === "flex" ? "none" : "flex";
+});
+document.addEventListener("click", (e) => {
+  if (!menuDropdown.contains(e.target) && !menuBtn.contains(e.target)) {
+    menuDropdown.style.display = "none";
+  }
+});
 
-    // ------------- QUESTION DATA (25 total) -------------
-    const questions = [
-         
-      
-{
-id: "spanish-steps",
-type: "mcq",
-tag: "Geography",
-text: "In which city are the Spanish Steps?",
-options: ["Paris", "Athens", "Madrid", "Rome"],
-correctIndex: 3,
-maxPoints: 1
-},
-{
-id: "jerk-cooking",
-type: "mcq",
-tag: "Food",
-text: "Jerk cooking originated in which country?",
-options: ["Mexico", "Jamaica", "Cuba", "Brazil"],
-correctIndex: 1,
-maxPoints: 1
-},
-{
-id: "anagram-honestly",
-type: "text-exact",
-tag: "Wordplay",
-text: "Which word meaning 'genuinely' is an anagram of 'on the sly'?",
-correctAnswer: "honestly",
-maxPoints: 1
+/* ---------------- GLOBAL STATE ---------------- */
+let questions = [];
+let questionStates = [];
 
-},
-{
-id: "non-consecutive-president",
-type: "mcq",
-tag: "Politics",
-text: "Before Donald Trump, who was the only US president to have won non-consecutive terms?",
-options: ["Theodore Roosevelt", "Grover Cleveland", "Woodrow Wilson", "Ulysses S. Grant"],
-correctIndex: 1,
-maxPoints: 1
-},
-{
-id: "at-symbol",
-type: "mcq",
-tag: "General knowledge",
-text: "The @ symbol shares a key with which number on a standard keyboard?",
-options: ["1", "2", "3", "4"],
-correctIndex: 1,
-maxPoints: 1
-},
-{
-id: "palindrome",
-type: "text-exact",
-tag: "Wordplay",
-text: "What is a word, phrase or number that reads the same forwards and backwards?",
-correctAnswer: "palindrome",
-maxPoints: 1
+const quizContainer = document.getElementById("quiz-container");
+const scoreBox = document.getElementById("score-box");
+const progressTextEl = document.getElementById("progress-text");
+const progressBarEl = document.getElementById("progress-bar");
 
-},
-{
-id: "braxton-hicks",
-type: "mcq",
-tag: "Biology",
-text: "“False” contractions that can occur in pregnancy are known as Braxton ... what?",
-options: ["Hicks", "Jones", "Marks", "Wells"],
-correctIndex: 0,
-maxPoints: 1
-},
-{
-id: "attorney-general-plural",
-type: "mcq",
-tag: "Language",
-text: "What is the plural of attorney-general?",
-options: ["Attorney-generals", "Attorneys-general", "Attorney generals", "Attornies-general"],
-correctIndex: 1,
-maxPoints: 1
-},
-{
-id: "nasal-septum",
-type: "text-exact",
-tag: "Biology",
-text: "Name the cartilage wall separating the nostrils.",
-correctAnswer: "Septum",
+/* ---------------- LOAD WEEKLY QUIZ ---------------- */
+(async function loadWeeklyQuiz() {
+  try {
+    const res = await fetch('weekly_quizzes.json');
+    const data = await res.json();
 
-maxPoints: 1
-},
-{
-id: "scarface-thriller-year",
- type: "year",
-tag: "Year",
-text: "In what year was the movie Scarface released, did the album Thriller reach number 1 in the USA, and was Andrew Garfield born?",
-correctYear: 1983,
-maxPoints: 2
+    const start = new Date(data.start_date);
+    const now = new Date();
 
-},
-{
-id: "manx",
-type: "mcq",
-tag: "Geography",
-text: "Manx is a historical language of which Crown dependency?",
-options: ["Jersey", "Guernsey", "Isle of Man", "Gibraltar"],
-correctIndex: 2,
-maxPoints: 1
-},
-{
-id: "womens-tennis",
-type: "mcq",
-tag: "Sport",
-text: "Who is currently ranked No. 1 in women’s singles tennis?",
-options: ["Iga Świątek", "Aryna Sabalenka", "Coco Gauff", "Elena Rybakina"],
-correctIndex: 1,
-maxPoints: 1
-},
-{
-id: "neptune-visible",
-type: "mcq",
-tag: "Science",
-text: "Is Neptune visible to the naked eye?",
-options: ["True", "False"],
-correctIndex: 1,
-maxPoints: 1
-},
-{
-id: "third-man",
-type: "mcq",
-tag: "Movies",
-text: "Which 1949 film features Orson Welles as Harry Lime?",
-options: ["Casablanca", "The Third Man", "Citizen Kane", "Rebecca"],
-correctIndex: 1,
-maxPoints: 1
-},
-{
-id: "azure-colour",
-type: "mcq",
-tag: "General knowledge",
-text: "What shade is azure?",
-options: ["Green", "Purple", "Blue", "Red"],
-correctIndex: 2,
-maxPoints: 1
-},
-{
-id: "draco-malfoy",
-type: "mcq",
-tag: "Movies",
-text: "In which Harry Potter film does Draco Malfoy have the most screen time in minutes from the first 3 movies?",
-options: ["Philosopher's Stone", "Chamber of Secrets", "Prisoner of Azkaban"],
-correctIndex: 1,
-maxPoints: 1
-},
-{
-id: "ted-talks",
-type: "text-exact",
-tag: "General knowledge",
-text: "What does the 'D' in TED Talks stand for?",
-correctAnswer: "Design",
+    const diffDays = Math.floor((now - start) / 86400000);
+    const weekIndex = Math.floor(diffDays / 7);
 
-maxPoints: 1
-},
-{
-id: "coachella-latina",
-type: "text-exact",
-tag: "Music",
-text: "Who was the first Latina to headline Coachella just recently?",
-correctAnswer: "Karol G",
+    const quizIndex = Math.min(weekIndex, data.weekly_quizzes.length - 1);
+    const selectedQuiz = data.weekly_quizzes[quizIndex];
 
-maxPoints: 1
-},
-{
-id: "first-ebay-item",
-type: "mcq",
-tag: "Tech",
-text: "What was the first object sold on eBay?",
-options: [ "Toy Car", "Trench Coat", "Book","Broken laser pointer"],
-correctIndex: 3,
-maxPoints: 1
-},
-{
-id: "least-dense-asia",
-type: "mcq",
-tag: "Geography",
-text: "Which Asian country is the least densely populated with just 2 people per square km?",
-options: ["Mongolia", "Kazakhstan", "Laos", "Uzbekistan"],
-correctIndex: 0,
-maxPoints: 1
-},
-{
-id: "moon-mission",
-type: "mcq",
-tag: "Space",
-text: "What was the name of the recent mission that sent 4 astronauts around the Moon?",
-options: ["Pioneer IV", "Artemis II", "Apollo 13", "Orion I"],
-correctIndex: 1,
-maxPoints: 1
-},
-{
-id: "dead-body-line",
-type: "text-exact",
-tag: "Movies",
-text: "Which movie opens with the line 'I was 12 going on 13 the first time I saw a dead human being'?",
-correctAnswer: "Stand by me",
+    questions = selectedQuiz.questions;
 
-maxPoints: 1
-},
-{
-id: "pixar-dvd",
-type: "mcq",
-tag: "Movies",
-text: "Which Pixar movie is the best-selling DVD of all time?",
-options: ["Finding Nemo", "Toy Story", "The Incredibles", "Cars"],
-correctIndex: 0,
-maxPoints: 1
-},
-{
-id: "einstein",
-type: "text-exact",
-tag: "Movies",
-text: "In Einstein’s famous equation, E=MC², the constant C stand for what?",
-correctAnswer: "Speed of light",
+    document.getElementById("quiz-title").textContent = selectedQuiz.title;
+    document.getElementById("quiz-week-info").textContent =
+      `Week ${quizIndex + 1} · ${questions.length} questions`;
 
-maxPoints: 1
-},
-{
-id: "maths",
-type: "text-exact",
-tag: "Movies",
-text: "There are 100 houses on the street and Tess is delivering newspapers to each house on the street. How many houses does she deliver a paper to with the number 2 in it?",
-correctAnswer: "19",
-
-maxPoints: 1
-}
-      
-]
-;
-
-    // ------------- STATE -------------
-    const questionStates = questions.map(q => ({
-      checked: false,
-      points: 0,
-      maxPoints: q.maxPoints
-    }));
-
-    const quizContainer = document.getElementById("quiz-container");
-    const scoreBox = document.getElementById("score-box");
-    const sharePanel = document.getElementById("share-panel");
-    const shareStatus = document.getElementById("share-status");
-    const progressTextEl = document.getElementById("progress-text");
-    const progressBarEl = document.getElementById("progress-bar");
-    const jumpUnansweredBtn = document.getElementById("jump-unanswered");
-
-    const TOTAL_QUESTIONS = questions.length;
-    const MAX_POINTS = questionStates.reduce((sum, s) => sum + s.maxPoints, 0);
-
-    // ------------- RENDERING -------------
-    function renderQuiz() {
-      quizContainer.innerHTML = "";
-      questions.forEach((q, index) => {
-        const card = document.createElement("article");
-        card.className = "question-card";
-        card.id = `card-${index}`;
-
-        const header = document.createElement("div");
-        header.className = "question-header";
-
-        const qNumber = document.createElement("div");
-        qNumber.className = "question-number";
-        qNumber.textContent = `Question ${index + 1}`;
-
-        const qText = document.createElement("div");
-        qText.className = "question-text";
-        qText.textContent = q.text;
-
-        header.appendChild(qNumber);
-        header.appendChild(qText);
-
-        if (q.tag) {
-          const tag = document.createElement("div");
-          tag.className = "question-tag";
-          tag.textContent = q.tag;
-          header.appendChild(tag);
-        }
-
-        card.appendChild(header);
-
-        // type-specific UI
-        if (q.type === "mcq") {
-          const optionsWrap = document.createElement("div");
-          optionsWrap.className = "options";
-          q.options.forEach((optText, optIndex) => {
-            const id = `q${index}_opt${optIndex}`;
-            const label = document.createElement("label");
-            label.className = "option-label";
-            label.setAttribute("for", id);
-            label.dataset.q = index;
-            label.dataset.opt = optIndex;
-
-            const input = document.createElement("input");
-            input.type = "radio";
-            input.name = `q${index}`;
-            input.id = id;
-            input.value = optIndex;
-
-            const span = document.createElement("span");
-            span.textContent = optText;
-
-            label.appendChild(input);
-            label.appendChild(span);
-            optionsWrap.appendChild(label);
-          });
-          card.appendChild(optionsWrap);
-        } else if (q.type === "text-exact" || q.type === "numeric" || q.type === "year") {
-          const input = document.createElement("input");
-          input.type = "text";
-          input.className = "question-input";
-          input.id = `input-${index}`;
-          input.placeholder = (q.type === "year" || q.type === "numeric") ? "Enter a number…" : "Type your answer…";
-          card.appendChild(input);
-        } else if (q.type === "self-text-image") {
-          if (q.image) {
-            const imgWrap = document.createElement("div");
-            imgWrap.className = "image-wrap";
-            const img = document.createElement("img");
-            img.src = q.image;
-            img.alt = "Question image";
-            imgWrap.appendChild(img);
-            card.appendChild(imgWrap);
-          }
-          const input = document.createElement("input");
-          input.type = "text";
-          input.className = "question-input";
-          input.id = `input-${index}`;
-          input.placeholder = "Type your guess (you'll self-mark)…";
-          card.appendChild(input);
-          const hint = document.createElement("div");
-          hint.className = "small-hint";
-          hint.textContent = "Tap 'Reveal answer' then choose if you were right.";
-          card.appendChild(hint);
-        } else if (q.type === "list-manual") {
-          const hint = document.createElement("div");
-          hint.className = "small-hint";
-          hint.textContent = "Write your answers first. Reveal the list, then enter how many you got right (1 point per planet).";
-          card.appendChild(hint);
-        } else if (q.type === "rank") {
-          const box = document.createElement("div");
-          box.className = "rank-box";
-          q.items.forEach((labelText, i) => {
-            const row = document.createElement("div");
-            row.className = "rank-row";
-            row.innerHTML = `
-              <input type="number" min="1" max="${q.items.length}" class="rank-input" data-index="${i}">
-              <span class="rank-label">${labelText}</span>
-            `;
-            box.appendChild(row);
-          });
-          card.appendChild(box);
-        }
-
-        // buttons
-        if (q.type === "self-text-image" || q.type === "list-manual") {
-          const revealBtn = document.createElement("button");
-          revealBtn.className = "btn-question";
-          revealBtn.type = "button";
-          revealBtn.textContent = "Reveal answer";
-          revealBtn.addEventListener("click", () => revealSelfMarked(index));
-          card.appendChild(revealBtn);
-        } else {
-          const checkBtn = document.createElement("button");
-          checkBtn.className = "btn-question";
-          checkBtn.type = "button";
-          checkBtn.textContent = "Check answer";
-          checkBtn.addEventListener("click", () => checkStandardQuestion(index));
-          card.appendChild(checkBtn);
-        }
-
-        const feedback = document.createElement("div");
-        feedback.className = "feedback";
-        feedback.id = `feedback-${index}`;
-        card.appendChild(feedback);
-
-        if (q.type === "self-text-image") {
-          const selfButtons = document.createElement("div");
-          selfButtons.className = "manual-score-wrap";
-          const correctBtn = document.createElement("button");
-          correctBtn.type = "button";
-          correctBtn.className = "btn-secondary";
-          correctBtn.textContent = "I got it right";
-          correctBtn.addEventListener("click", () => {
-            questionStates[index].checked = true;
-            questionStates[index].points = q.maxPoints;
-            feedback.textContent = `Nice! You’ve given yourself ${q.maxPoints} point${q.maxPoints !== 1 ? "s" : ""}.`;
-            feedback.classList.remove("incorrect");
-            feedback.classList.add("correct");
-            updateScoreAndProgress();
-          });
-          const wrongBtn = document.createElement("button");
-          wrongBtn.type = "button";
-          wrongBtn.className = "btn-secondary";
-          wrongBtn.textContent = "I got it wrong";
-          wrongBtn.addEventListener("click", () => {
-            questionStates[index].checked = true;
-            questionStates[index].points = 0;
-            feedback.textContent = "Marked as 0 points.";
-            feedback.classList.remove("correct");
-            feedback.classList.add("incorrect");
-            updateScoreAndProgress();
-          });
-          selfButtons.appendChild(correctBtn);
-          selfButtons.appendChild(wrongBtn);
-          card.appendChild(selfButtons);
-        } else if (q.type === "list-manual") {
-          const manual = document.createElement("div");
-          manual.className = "manual-score-wrap";
-          manual.innerHTML = `
-            <span>How many did you get right?</span>
-            <input type="number" min="0" max="${q.maxPoints}" id="manual-${index}" value="0" />
-            <button type="button" class="btn-secondary">Save score</button>
-          `;
-          const btn = manual.querySelector("button");
-          btn.addEventListener("click", () => {
-            const inputEl = manual.querySelector("input");
-            let val = parseInt(inputEl.value, 10);
-            if (isNaN(val) || val < 0) val = 0;
-            if (val > q.maxPoints) val = q.maxPoints;
-            inputEl.value = val;
-            questionStates[index].checked = true;
-            questionStates[index].points = val;
-            feedback.textContent = `Saved ${val} point${val !== 1 ? "s" : ""} for this question.`;
-            feedback.classList.remove("incorrect");
-            feedback.classList.add("correct");
-            updateScoreAndProgress();
-          });
-          card.appendChild(manual);
-        }
-
-        quizContainer.appendChild(card);
-      });
-    }
-
+    resetState();
     renderQuiz();
-
-    // ------------- CHECKING LOGIC -------------
-    function checkStandardQuestion(index) {
-      const q = questions[index];
-      const feedback = document.getElementById(`feedback-${index}`);
-      const card = document.getElementById(`card-${index}`);
-      feedback.classList.remove("correct", "incorrect");
-
-      if (q.type === "mcq") {
-        const selected = document.querySelector(`input[name="q${index}"]:checked`);
-        const labels = document.querySelectorAll(`label.option-label[data-q="${index}"]`);
-        labels.forEach(l => l.classList.remove("correct", "chosen-wrong"));
-
-        if (!selected) {
-          feedback.textContent = "Choose an answer first 😊";
-          return;
-        }
-        const chosen = Number(selected.value);
-        const correct = q.correctIndex;
-
-        labels.forEach(label => {
-          const opt = Number(label.dataset.opt);
-          if (opt === correct) {
-            label.classList.add("correct");
-          } else if (opt === chosen && chosen !== correct) {
-            label.classList.add("chosen-wrong");
-          }
-        });
-
-        if (chosen === correct) {
-          feedback.textContent = "Correct! 🎉";
-          feedback.classList.add("correct");
-          questionStates[index].points = q.maxPoints;
-        } else {
-          feedback.textContent = `Incorrect – correct answer: ${q.options[correct]}`;
-          feedback.classList.add("incorrect");
-          questionStates[index].points = 0;
-        }
-        questionStates[index].checked = true;
-      } else if (q.type === "text-exact") {
-        const input = document.getElementById(`input-${index}`);
-        const normalise = (str) =>
-          (str || "").toLowerCase().replace(/[^a-z0-9]/g, "").trim();
-        const user = normalise(input.value);
-        const correct = normalise(q.correctAnswer);
-        if (!user) {
-          feedback.textContent = "Type an answer first 😊";
-          return;
-        }
-        if (user === correct) {
-          feedback.textContent = "Correct! 🎉";
-          feedback.classList.add("correct");
-          questionStates[index].points = q.maxPoints;
-        } else {
-          feedback.textContent = `Incorrect – correct answer: ${q.correctAnswer}`;
-          feedback.classList.add("incorrect");
-          questionStates[index].points = 0;
-        }
-        questionStates[index].checked = true;
-      } else if (q.type === "numeric") {
-        const input = document.getElementById(`input-${index}`);
-        const val = parseInt(input.value, 10);
-        if (isNaN(val)) {
-          feedback.textContent = "Enter a number first 😊";
-          return;
-        }
-        if (val === q.correctNumber) {
-          feedback.textContent = "Correct! 🎉";
-          feedback.classList.add("correct");
-          questionStates[index].points = q.maxPoints;
-        } else {
-          feedback.textContent = `Incorrect – correct answer: ${q.correctNumber}`;
-          feedback.classList.add("incorrect");
-          questionStates[index].points = 0;
-        }
-        questionStates[index].checked = true;
-      } else if (q.type === "year") {
-        const input = document.getElementById(`input-${index}`);
-        const val = parseInt(input.value, 10);
-        if (isNaN(val)) {
-          feedback.textContent = "Enter a year first 😊";
-          return;
-        }
-        const diff = Math.abs(val - q.correctYear);
-        let pts = 0;
-        if (diff === 0) pts = 2;
-        else if (diff === 1) pts = 1;
-
-        if (pts === 2) {
-          feedback.textContent = "Bang on! 🎉 +2 points";
-          feedback.classList.add("correct");
-        } else if (pts === 1) {
-          feedback.textContent = `Close! The correct year is ${q.correctYear}. +1 point`;
-          feedback.classList.add("correct");
-        } else {
-          feedback.textContent = `Incorrect – correct year: ${q.correctYear}`;
-          feedback.classList.add("incorrect");
-        }
-        questionStates[index].points = pts;
-        questionStates[index].checked = true;
-      } else if (q.type === "rank") {
-        const inputs = card.querySelectorAll(".rank-input");
-        let allValid = true;
-        let correct = true;
-
-        inputs.forEach((input, i) => {
-          const val = Number(input.value);
-          if (!val || val < 1 || val > q.items.length) allValid = false;
-          if (val !== q.correctRanks[i]) correct = false;
-        });
-
-        if (!allValid) {
-          feedback.textContent = `Enter numbers 1–${q.items.length} beside each title.`;
-          feedback.classList.add("incorrect");
-          return;
-        }
-
-        if (correct) {
-          feedback.textContent = "Correct! 🎉";
-          feedback.classList.add("correct");
-          questionStates[index].points = q.maxPoints;
-        } else {
-          feedback.textContent = "Not quite – the correct order is 1) Lord of the Rings, 2) Harry Potter, 3) King James Bible.";
-          feedback.classList.add("incorrect");
-          questionStates[index].points = 0;
-        }
-        questionStates[index].checked = true;
-      }
-
-      updateScoreAndProgress();
-    }
-
-    function revealSelfMarked(index) {
-      const q = questions[index];
-      const feedback = document.getElementById(`feedback-${index}`);
-      feedback.classList.remove("correct", "incorrect");
-      if (q.type === "list-manual") {
-        feedback.textContent = `Planets with rings: ${q.correctItems.join(", ")}.`;
-      } else {
-        feedback.textContent = `Answer: ${q.answerText}`;
-      }
-    }
-
-    // ------------- SCORE + PROGRESS -------------
-    let lastPoints = 0;
-    let lastPercent = 0;
-
-    function updateScoreAndProgress() {
-      const totalPoints = questionStates.reduce((sum, s) => sum + s.points, 0);
-      const answered = questionStates.reduce((count, s) => count + (s.checked ? 1 : 0), 0);
-      const progressPercent = Math.round((answered / TOTAL_QUESTIONS) * 100);
-      const percentScore = Math.round((totalPoints / MAX_POINTS) * 100);
-
-      lastPoints = totalPoints;
-      lastPercent = percentScore;
-
-      progressTextEl.textContent = `${answered} / ${TOTAL_QUESTIONS} questions checked`;
-      progressBarEl.style.width = progressPercent + "%";
-
-      scoreBox.innerHTML = `
-        <div class="percent">${percentScore}%</div>
-        <div class="raw">Currently ${totalPoints} out of ${MAX_POINTS} points</div>
-      `;
-
-      if (answered > 0) {
-        sharePanel.style.display = "flex";
-      } else {
-        sharePanel.style.display = "none";
-      }
-    }
-
     updateScoreAndProgress();
 
-    // UNANSWERED BUTTON
-    jumpUnansweredBtn.addEventListener("click", () => {
-      let targetIndex = questionStates.findIndex(s => !s.checked);
-      if (targetIndex === -1) {
-        shareStatus.textContent = "You've checked every question – nice! 🎉";
-        sharePanel.style.display = "flex";
-        return;
-      }
-      const card = document.getElementById(`card-${targetIndex}`);
-      if (card) {
-        card.scrollIntoView({ behavior: "smooth", block: "center" });
-        card.style.outline = "2px solid var(--neon)";
-        setTimeout(() => { card.style.outline = "none"; }, 1400);
-      }
-    });
+  } catch (err) {
+    console.error("Failed to load quiz:", err);
+  }
+})();
 
-    // SHARING
-    const shareWhatsAppBtn = document.getElementById("share-whatsapp");
-    const copyResultBtn = document.getElementById("copy-result");
+/* ---------------- RESET STATE ---------------- */
+function resetState() {
+  questionStates = questions.map(q => ({
+    checked: false,
+    points: 0,
+    maxPoints: q.maxPoints || 1
+  }));
+}
 
-    function buildShareText() {
-      const baseLines = [
-        `I just played "The Big Fat Sunday Quiz" on Ben's Trivia!`,
-        ``,
-        `My score: ${lastPoints}/${MAX_POINTS} (${lastPercent}%)`,
-        ``,
-        `Try to beat my score:`,
-        window.location.href
-      ];
-      return baseLines.join("\n");
+/* ---------------- RENDER ---------------- */
+function renderQuiz() {
+  quizContainer.innerHTML = "";
+
+  questions.forEach((q, index) => {
+    const card = document.createElement("div");
+    card.className = "question-card";
+
+    const title = document.createElement("div");
+    title.className = "question-text";
+    title.textContent = `Q${index + 1}. ${q.text}`;
+    card.appendChild(title);
+
+    if (q.type === "mcq") {
+      q.options.forEach((opt, i) => {
+        const btn = document.createElement("button");
+        btn.className = "btn-secondary";
+        btn.textContent = opt;
+
+        btn.onclick = () => checkAnswer(index, i);
+
+        card.appendChild(btn);
+      });
     }
 
-    shareWhatsAppBtn.addEventListener("click", () => {
-      const text = buildShareText();
-      const url = "https://wa.me/?text=" + encodeURIComponent(text);
-      window.open(url, "_blank");
-    });
+    if (q.type === "year") {
+      const input = document.createElement("input");
+      input.placeholder = "Enter year";
+      input.className = "question-input";
+      input.id = `input-${index}`;
+      card.appendChild(input);
 
-    copyResultBtn.addEventListener("click", async () => {
-      const text = buildShareText();
-      try {
-        await navigator.clipboard.writeText(text);
-        shareStatus.textContent = "Copied! Paste into Messenger, Instagram, SMS, etc.";
-      } catch (err) {
-        shareStatus.textContent = "Couldn't copy automatically – select and copy manually.";
-      }
-    });
-  </script>
+      const btn = document.createElement("button");
+      btn.textContent = "Check";
+      btn.className = "btn-secondary";
+      btn.onclick = () => checkYear(index);
+      card.appendChild(btn);
+    }
+
+    const feedback = document.createElement("div");
+    feedback.id = `feedback-${index}`;
+    feedback.className = "feedback";
+    card.appendChild(feedback);
+
+    quizContainer.appendChild(card);
+  });
+}
+
+/* ---------------- CHECK ANSWERS ---------------- */
+function checkAnswer(index, choice) {
+  const q = questions[index];
+  const feedback = document.getElementById(`feedback-${index}`);
+
+  if (choice === q.correctIndex) {
+    feedback.textContent = "Correct!";
+    feedback.classList.add("correct");
+    questionStates[index].points = q.maxPoints;
+  } else {
+    feedback.textContent = `Wrong! Answer: ${q.options[q.correctIndex]}`;
+    feedback.classList.add("incorrect");
+  }
+
+  questionStates[index].checked = true;
+  updateScoreAndProgress();
+}
+
+function checkYear(index) {
+  const q = questions[index];
+  const input = document.getElementById(`input-${index}`);
+  const val = parseInt(input.value, 10);
+  const feedback = document.getElementById(`feedback-${index}`);
+
+  if (isNaN(val)) {
+    feedback.textContent = "Enter a year!";
+    return;
+  }
+
+  const diff = Math.abs(val - q.correctYear);
+  let pts = 0;
+
+  if (diff === 0) pts = 2;
+  else if (diff === 1) pts = 1;
+
+  if (pts > 0) {
+    feedback.textContent = `Close! Correct: ${q.correctYear}`;
+    feedback.classList.add("correct");
+  } else {
+    feedback.textContent = `Wrong! ${q.correctYear}`;
+    feedback.classList.add("incorrect");
+  }
+
+  questionStates[index].points = pts;
+  questionStates[index].checked = true;
+  updateScoreAndProgress();
+}
+
+/* ---------------- SCORE ---------------- */
+function updateScoreAndProgress() {
+  const totalPoints = questionStates.reduce((sum, s) => sum + s.points, 0);
+  const maxPoints = questionStates.reduce((sum, s) => sum + s.maxPoints, 0);
+  const answered = questionStates.filter(s => s.checked).length;
+
+  const percent = Math.round((totalPoints / maxPoints) * 100) || 0;
+
+  scoreBox.innerHTML = `
+    <div class="percent">${percent}%</div>
+    <div>${totalPoints} / ${maxPoints} points</div>
+  `;
+
+  progressTextEl.textContent = `${answered} / ${questions.length}`;
+  progressBarEl.style.width = (answered / questions.length * 100) + "%";
+}
+</script>
 </body>
 </html>
