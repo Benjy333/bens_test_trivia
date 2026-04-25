@@ -103,7 +103,7 @@
         { "id": "super-bowl", "type": "mcq", "tag": "Sport", "text": "Which sport is played in the Super Bowl?", "options": ["Baseball", "Basketball", "American Football", "Rugby"], "correctIndex": 2, "maxPoints": 1 },
         { "id": "rugby-points-try", "type": "numeric", "tag": "Sport", "text": "How many points is a try worth in rugby union?", "correctNumber": 5, "maxPoints": 1 },
         { "id": "f1-drivers", "type": "numeric", "tag": "Sport", "text": "How many drivers are on the Formula 1 grid in a race?", "correctNumber": 20, "maxPoints": 1 },
-        { "id": "golf-major-count", "type": "numeric", "tag": "Sport", "text": "How many golf majors are there?", "correctNumber": 4, "maxPoints": 1 }
+        { "id": "golf-major-count", "type": "numeric", "tag": "Sport", "text": "How many golf majors are there?", "correctNumber": 4, "maxPoints": 1 },
         { "id": "eye-iris", "type": "text-exact", "tag": "Biology", "text": "The coloured part of the eye around the pupil is the ... what?", "correctAnswer": "iris", "acceptedAnswers": ["iris", "the iris"], "maxPoints": 1 },
         { "id": "emily-dickinson", "type": "text-exact", "tag": "Literature", "text": "Which poet wrote the lines: 'Hope is the thing with feathers / That perches in the soul'?", "correctAnswer": "emily dickinson", "acceptedAnswers": ["emily dickinson", "dickinson", "e dickinson", "e. dickinson"], "maxPoints": 1 },
         { "id": "national-flower", "type": "text-exact", "tag": "General knowledge", "text": "What is the national flower of both Austria and Switzerland?", "correctAnswer": "edelweiss", "acceptedAnswers": ["edelweiss"], "maxPoints": 1 },
