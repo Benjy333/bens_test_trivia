@@ -682,6 +682,23 @@ document.getElementById("btn-submit-score").addEventListener("click", async () =
 
     if (res.ok) {
       scoreSubmitted = true;
+      /* Also log per-question stats */
+      const questionRows = questions.map((q, i) => ({
+        quiz_title: currentQuizTitle,
+        question_id: q.id,
+        correct: states[i].points > 0,
+        points_earned: states[i].points
+      }));
+      fetch(`${SUPA_URL}/rest/v1/question_stats`, {
+        method: "POST",
+        headers: {
+          "apikey": SUPA_KEY,
+          "Authorization": `Bearer ${SUPA_KEY}`,
+          "Content-Type": "application/json",
+          "Prefer": "return=minimal"
+        },
+        body: JSON.stringify(questionRows)
+      });
       document.getElementById("submit-status").textContent = `✓ Score submitted! Good luck, ${name}!`;
       document.getElementById("submit-row").style.display = "none";
       loadLeaderboard();
