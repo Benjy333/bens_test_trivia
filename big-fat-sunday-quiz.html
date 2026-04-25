@@ -114,6 +114,34 @@
 
     .global-footer { text-align: center; padding: 12px 8px 20px; font-size: 0.85rem; color: var(--neon-soft); opacity: 0.9; }
 
+    /* ---- LEADERBOARD ---- */
+    .leaderboard-section { margin-top: 28px; border-top: 1px solid rgba(150,208,255,0.2); padding-top: 20px; }
+    .leaderboard-title { text-align: center; font-size: 1rem; font-weight: 600; color: var(--neon-soft); margin-bottom: 14px; letter-spacing: 0.05em; }
+    .submit-row { display: flex; gap: 8px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
+    .name-input {
+      flex: 1; min-width: 140px; padding: 8px 14px; border-radius: 999px;
+      border: 1px solid rgba(150,208,255,0.6); background: rgba(0,8,18,0.85);
+      color: #e9f4ff; font-size: 0.9rem;
+    }
+    .btn-submit-score {
+      padding: 8px 18px; border-radius: 999px; border: 1px solid var(--good);
+      background: rgba(56,239,125,0.1); color: var(--good);
+      font-size: 0.85rem; cursor: pointer; white-space: nowrap; font-weight: 600;
+    }
+    .btn-submit-score:hover { background: var(--good); color: #001; }
+    .btn-submit-score:disabled { opacity: 0.4; cursor: default; }
+    .leaderboard-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    .leaderboard-table th { text-align: left; padding: 6px 8px; color: var(--neon-soft); opacity: 0.7; font-weight: 500; border-bottom: 1px solid rgba(150,208,255,0.15); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    .leaderboard-table td { padding: 8px 8px; border-bottom: 1px solid rgba(150,208,255,0.07); }
+    .leaderboard-table tr:first-child td { color: #ffd700; }
+    .leaderboard-table tr:nth-child(2) td { color: #c0d8e8; }
+    .leaderboard-table tr:nth-child(3) td { color: #e8b87a; }
+    .rank-medal { font-size: 1rem; }
+    .lb-status { text-align: center; font-size: 0.82rem; opacity: 0.7; margin-top: 8px; }
+    .lb-tabs { display: flex; gap: 8px; margin-bottom: 14px; justify-content: center; }
+    .lb-tab { padding: 5px 14px; border-radius: 999px; border: 1px solid rgba(150,208,255,0.3); background: transparent; color: var(--neon-soft); font-size: 0.8rem; cursor: pointer; }
+    .lb-tab.active { background: var(--neon); color: #001; border-color: var(--neon); }
+
     @media (max-width: 480px) {
       .header-logo { height: 44px; }
       .page-title { font-size: 0.95rem; }
@@ -172,6 +200,35 @@
           <button class="btn-secondary" id="copy-result">Copy result</button>
         </div>
         <div id="share-status" style="font-size:11px;opacity:0.8;margin-top:6px;"></div>
+      </div>
+      <!-- LEADERBOARD -->
+      <div class="leaderboard-section" id="leaderboard-section" style="display:none;">
+        <div class="leaderboard-title">🏆 This Week's Leaderboard</div>
+
+        <div class="submit-row" id="submit-row">
+          <input class="name-input" id="player-name" placeholder="Your name…" maxlength="20" />
+          <button class="btn-submit-score" id="btn-submit-score">Submit Score</button>
+        </div>
+        <div id="submit-status" class="lb-status"></div>
+
+        <div class="lb-tabs">
+          <button class="lb-tab active" id="tab-week" onclick="switchTab('week')">This Week</button>
+          <button class="lb-tab" id="tab-all" onclick="switchTab('all')">All Time</button>
+        </div>
+
+        <table class="leaderboard-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Name</th>
+              <th>Score</th>
+              <th>%</th>
+            </tr>
+          </thead>
+          <tbody id="leaderboard-body">
+            <tr><td colspan="4" style="text-align:center;opacity:0.5;padding:16px;">Loading…</td></tr>
+          </tbody>
+        </table>
       </div>
     </section>
   </main>
@@ -251,6 +308,7 @@ function isCorrect(val, q) {
     const res  = await fetch("weekly_quizzes.json");
     const data = await res.json();
 
+    data_start_date = data.start_date;
     const start    = new Date(data.start_date);
     const diffDays = Math.floor((Date.now() - start) / 86400000);
     const weekIdx  = Math.min(Math.floor(diffDays / 7), data.weekly_quizzes.length - 1);
@@ -487,6 +545,7 @@ function updateProgress() {
 
   if (answered === total && total > 0) {
     document.getElementById("share-panel").style.display = "flex";
+    showLeaderboard();
   }
 }
 
@@ -516,6 +575,139 @@ document.getElementById("copy-result").addEventListener("click", () => {
     setTimeout(() => document.getElementById("share-status").textContent = "", 2000);
   });
 });
+
+/* ================================================================
+   SUPABASE LEADERBOARD
+   ================================================================ */
+const SUPA_URL = "https://cxgndxmvyerwejwyitrf.supabase.co";
+const SUPA_KEY = "sb_publishable_LMgLiRKeCPREBMa9r-pEOQ_et-2xo0L";
+
+let currentTab = "week";
+let currentQuizTitle = "";
+let scoreSubmitted = false;
+
+/* Show leaderboard section once quiz is complete */
+function showLeaderboard() {
+  document.getElementById("leaderboard-section").style.display = "block";
+  currentQuizTitle = document.getElementById("quiz-title").textContent;
+  loadLeaderboard();
+}
+
+/* Switch between This Week / All Time tabs */
+function switchTab(tab) {
+  currentTab = tab;
+  document.getElementById("tab-week").classList.toggle("active", tab === "week");
+  document.getElementById("tab-all").classList.toggle("active", tab === "all");
+  loadLeaderboard();
+}
+
+/* Load scores from Supabase */
+async function loadLeaderboard() {
+  const tbody = document.getElementById("leaderboard-body");
+  tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;opacity:0.5;padding:16px;">Loading…</td></tr>`;
+
+  try {
+    let url = `${SUPA_URL}/rest/v1/leaderboard?select=player_name,score,max_score,percent,submitted_at&order=score.desc,percent.desc&limit=10`;
+
+    if (currentTab === "week") {
+      /* filter to current week based on start_date */
+      const start = new Date(data_start_date);
+      const diffDays = Math.floor((Date.now() - start) / 86400000);
+      const weekIdx = Math.floor(diffDays / 7);
+      const weekStart = new Date(start.getTime() + weekIdx * 7 * 86400000);
+      const weekEnd   = new Date(weekStart.getTime() + 7 * 86400000);
+      url += `&quiz_title=eq.${encodeURIComponent(currentQuizTitle)}`;
+      url += `&submitted_at=gte.${weekStart.toISOString()}`;
+      url += `&submitted_at=lt.${weekEnd.toISOString()}`;
+    } else {
+      url += `&quiz_title=eq.${encodeURIComponent(currentQuizTitle)}`;
+    }
+
+    const res = await fetch(url, {
+      headers: { "apikey": SUPA_KEY, "Authorization": `Bearer ${SUPA_KEY}` }
+    });
+    const rows = await res.json();
+
+    if (!rows.length) {
+      tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;opacity:0.5;padding:16px;">No scores yet — be the first!</td></tr>`;
+      return;
+    }
+
+    const medals = ["🥇","🥈","🥉"];
+    tbody.innerHTML = rows.map((r, i) => `
+      <tr>
+        <td><span class="rank-medal">${medals[i] || (i+1)}</span></td>
+        <td>${escapeHtml(r.player_name)}</td>
+        <td>${r.score} / ${r.max_score}</td>
+        <td>${r.percent}%</td>
+      </tr>
+    `).join("");
+  } catch(err) {
+    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;opacity:0.5;padding:16px;">Could not load scores.</td></tr>`;
+  }
+}
+
+/* Submit score */
+document.getElementById("btn-submit-score").addEventListener("click", async () => {
+  if (scoreSubmitted) return;
+  const nameEl = document.getElementById("player-name");
+  const name = nameEl.value.trim();
+  if (!name) { nameEl.focus(); return; }
+
+  const earned = states.reduce((s, x) => s + x.points, 0);
+  const maxPts = states.reduce((s, x) => s + x.maxPoints, 0);
+  const pct    = maxPts ? Math.round((earned / maxPts) * 100) : 0;
+
+  const btn = document.getElementById("btn-submit-score");
+  btn.disabled = true;
+  btn.textContent = "Submitting…";
+
+  try {
+    const res = await fetch(`${SUPA_URL}/rest/v1/leaderboard`, {
+      method: "POST",
+      headers: {
+        "apikey": SUPA_KEY,
+        "Authorization": `Bearer ${SUPA_KEY}`,
+        "Content-Type": "application/json",
+        "Prefer": "return=minimal"
+      },
+      body: JSON.stringify({
+        player_name: name,
+        quiz_title: currentQuizTitle,
+        score: earned,
+        max_score: maxPts,
+        percent: pct
+      })
+    });
+
+    if (res.ok) {
+      scoreSubmitted = true;
+      document.getElementById("submit-status").textContent = `✓ Score submitted! Good luck, ${name}!`;
+      document.getElementById("submit-row").style.display = "none";
+      loadLeaderboard();
+    } else {
+      btn.disabled = false;
+      btn.textContent = "Submit Score";
+      document.getElementById("submit-status").textContent = "Something went wrong. Try again.";
+    }
+  } catch(err) {
+    btn.disabled = false;
+    btn.textContent = "Submit Score";
+    document.getElementById("submit-status").textContent = "Could not connect. Check your internet.";
+  }
+});
+
+/* Allow pressing Enter in name field */
+document.getElementById("player-name").addEventListener("keydown", e => {
+  if (e.key === "Enter") document.getElementById("btn-submit-score").click();
+});
+
+function escapeHtml(str) {
+  return str.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+
+/* Store start_date globally so leaderboard can access it */
+let data_start_date = "2026-04-19";
 </script>
 </body>
 </html>
