@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Quiz Stats · Ben's Trivia</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .global-header {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 120;
+      padding: 10px 14px 12px;
+      background: linear-gradient(90deg, #020713ee, #041831ee);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(150, 208, 255, 0.3);
+    }
+    .header-row-top { display: flex; align-items: center; gap: 12px; }
+    .header-logo { height: 52px; width: auto; filter: drop-shadow(0 0 8px var(--neon)) drop-shadow(0 0 18px var(--neon-soft)); }
+    .header-row-bottom { margin-top: 6px; text-align: center; }
+    .page-title { margin: 0; font-size: 1.1rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text); text-shadow: 0 0 8px var(--neon-soft); }
+    .global-header #menu-btn {
+      background: rgba(0,0,0,.25); border: 1.5px solid var(--neon); color: var(--neon);
+      font-size: 1.3rem; padding: 6px 12px; border-radius: 12px; cursor: pointer;
+      box-shadow: 0 0 10px var(--neon-soft); transition: .18s;
+    }
+    .global-header #menu-btn:hover { background: var(--neon); color: #001; }
+    .menu-dropdown {
+      position: absolute; top: 60px; left: 8px; background: var(--bg2);
+      border: 1px solid var(--neon); border-radius: 12px; padding: 6px;
+      box-shadow: 0 0 18px var(--neon-soft); min-width: 210px;
+      display: none; flex-direction: column; z-index: 200;
+    }
+    .menu-dropdown a { display: block; padding: 10px 12px; color: var(--text); text-decoration: none; border-radius: 10px; font-size: 0.95rem; white-space: nowrap; }
+    .menu-dropdown a:hover { background: var(--neon); color: #001; }
+
+    body { padding-top: 130px; }
+    main { display: grid; place-items: center; padding: 24px 16px 48px; }
+    .stats-shell { width: min(960px, 100%); display: flex; flex-direction: column; gap: 20px; }
+
+    /* Quiz selector */
+    .quiz-select-wrap { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .quiz-select-wrap label { font-size: 0.85rem; opacity: 0.7; }
+    select.quiz-picker {
+      padding: 8px 14px; border-radius: 999px;
+      border: 1px solid rgba(150,208,255,0.6); background: rgba(0,8,18,0.85);
+      color: #e9f4ff; font-size: 0.9rem; cursor: pointer; flex: 1;
+    }
+
+    /* Summary cards */
+    .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
+    .stat-card {
+      background: radial-gradient(circle at top left, #12335a 0, #020a16 70%);
+      border: 1px solid rgba(150,208,255,0.3); border-radius: 14px;
+      padding: 14px 16px; text-align: center;
+    }
+    .stat-card .stat-value { font-size: 1.8rem; font-weight: 700; color: var(--neon-soft); text-shadow: 0 0 8px var(--neon-soft); }
+    .stat-card .stat-label { font-size: 0.75rem; opacity: 0.65; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 4px; }
+
+    /* Section headings */
+    .section-heading {
+      font-size: 0.85rem; font-weight: 600; letter-spacing: 0.06em;
+      text-transform: uppercase; color: var(--neon-soft); opacity: 0.8;
+      margin-bottom: 10px;
+    }
+
+    /* Question bars */
+    .question-list { display: flex; flex-direction: column; gap: 10px; }
+    .q-row {
+      background: rgba(3,15,34,0.7); border-radius: 12px;
+      border: 1px solid rgba(150,208,255,0.15); padding: 10px 14px;
+    }
+    .q-row-top { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin-bottom: 6px; }
+    .q-text { font-size: 0.88rem; font-weight: 500; flex: 1; }
+    .q-pct { font-size: 0.82rem; font-weight: 700; white-space: nowrap; }
+    .q-pct.easy { color: var(--good); }
+    .q-pct.medium { color: #f5c542; }
+    .q-pct.hard { color: var(--bad); }
+    .q-bar-outer { height: 6px; border-radius: 999px; background: rgba(150,208,255,0.1); overflow: hidden; }
+    .q-bar-inner { height: 100%; border-radius: 999px; transition: width 0.4s ease; }
+    .q-bar-inner.easy { background: var(--good); box-shadow: 0 0 8px rgba(56,239,125,0.5); }
+    .q-bar-inner.medium { background: #f5c542; box-shadow: 0 0 8px rgba(245,197,66,0.5); }
+    .q-bar-inner.hard { background: var(--bad); box-shadow: 0 0 8px rgba(255,66,102,0.5); }
+    .q-tag { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.5; }
+
+    /* Highlight cards */
+    .highlight-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 500px) { .highlight-grid { grid-template-columns: 1fr; } }
+    .highlight-card {
+      border-radius: 14px; padding: 14px 16px;
+      border: 1px solid rgba(150,208,255,0.2);
+    }
+    .highlight-card.hardest { background: rgba(255,66,102,0.08); border-color: rgba(255,66,102,0.3); }
+    .highlight-card.easiest { background: rgba(56,239,125,0.08); border-color: rgba(56,239,125,0.3); }
+    .highlight-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; opacity: 0.7; margin-bottom: 6px; }
+    .highlight-card.hardest .highlight-label { color: var(--bad); }
+    .highlight-card.easiest .highlight-label { color: var(--good); }
+    .highlight-q { font-size: 0.88rem; font-weight: 500; line-height: 1.4; margin-bottom: 6px; }
+    .highlight-pct { font-size: 1.2rem; font-weight: 700; }
+    .highlight-card.hardest .highlight-pct { color: var(--bad); }
+    .highlight-card.easiest .highlight-pct { color: var(--good); }
+
+    /* Leaderboard table */
+    .lb-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    .lb-table th { text-align: left; padding: 6px 10px; color: var(--neon-soft); opacity: 0.7; font-weight: 500; border-bottom: 1px solid rgba(150,208,255,0.15); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    .lb-table td { padding: 9px 10px; border-bottom: 1px solid rgba(150,208,255,0.07); }
+    .lb-table tr:nth-child(1) td { color: #ffd700; }
+    .lb-table tr:nth-child(2) td { color: #c0d8e8; }
+    .lb-table tr:nth-child(3) td { color: #e8b87a; }
+
+    .card { background: var(--bg2); border: 1px solid rgba(150,208,255,0.2); border-radius: 16px; padding: 18px 16px; }
+    .loading-msg { text-align: center; opacity: 0.5; padding: 24px; font-size: 0.9rem; }
+    .global-footer { text-align: center; padding: 12px 8px 20px; font-size: 0.85rem; color: var(--neon-soft); opacity: 0.9; }
+  </style>
+</head>
+<body>
+  <header class="global-header">
+    <div class="header-row-top">
+      <button id="menu-btn">☰</button>
+      <img src="logo.png" class="header-logo" alt="Ben's Trivia Logo">
+    </div>
+    <div class="header-row-bottom">
+      <h1 class="page-title">📊 Quiz Stats</h1>
+    </div>
+    <nav class="menu-dropdown" id="menu-dropdown">
+      <a href="index.html">🎯 Daily Trivia</a>
+      <a href="anagram.html">🔤 Anagram Game</a>
+      <a href="riddle.html">🕵️ Riddle Game</a>
+      <a href="connections.html">🧩 Connections</a>
+      <a href="big-fat-sunday-quiz.html">🍻 Big Fat Sunday Quiz</a>
+      <a href="stats.html">📊 Quiz Stats</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="stats-shell">
+
+      <!-- Quiz picker -->
+      <div class="card">
+        <div class="quiz-select-wrap">
+          <label for="quiz-picker">Showing stats for:</label>
+          <select class="quiz-picker" id="quiz-picker">
+            <option value="">Loading quizzes…</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Summary cards -->
+      <div class="summary-grid" id="summary-grid">
+        <div class="stat-card"><div class="stat-value" id="stat-players">—</div><div class="stat-label">Players</div></div>
+        <div class="stat-card"><div class="stat-value" id="stat-avg">—</div><div class="stat-label">Avg Score</div></div>
+        <div class="stat-card"><div class="stat-value" id="stat-top">—</div><div class="stat-label">Top Score</div></div>
+        <div class="stat-card"><div class="stat-value" id="stat-avg-pct">—</div><div class="stat-label">Avg %</div></div>
+      </div>
+
+      <!-- Hardest / Easiest highlights -->
+      <div class="highlight-grid" id="highlights" style="display:none;">
+        <div class="highlight-card hardest">
+          <div class="highlight-label">🔴 Hardest Question</div>
+          <div class="highlight-q" id="hardest-q">—</div>
+          <div class="highlight-pct" id="hardest-pct">—</div>
+        </div>
+        <div class="highlight-card easiest">
+          <div class="highlight-label">🟢 Easiest Question</div>
+          <div class="highlight-q" id="easiest-q">—</div>
+          <div class="highlight-pct" id="easiest-pct">—</div>
+        </div>
+      </div>
+
+      <!-- Per-question breakdown -->
+      <div class="card">
+        <div class="section-heading">Question Breakdown</div>
+        <div class="question-list" id="question-list">
+          <div class="loading-msg">Select a quiz above to load stats</div>
+        </div>
+      </div>
+
+      <!-- Leaderboard -->
+      <div class="card">
+        <div class="section-heading">Top Scores</div>
+        <table class="lb-table">
+          <thead>
+            <tr><th>#</th><th>Name</th><th>Score</th><th>%</th><th>Date</th></tr>
+          </thead>
+          <tbody id="lb-body">
+            <tr><td colspan="5" class="loading-msg">Select a quiz above</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="global-footer">Made by Ben · Quiz Stats</footer>
+
+<script>
+const SUPA_URL = "https://cxgndxmvyerwejwyitrf.supabase.co";
+const SUPA_KEY = "sb_publishable_LMgLiRKeCPREBMa9r-pEOQ_et-2xo0L";
+
+const menuBtn = document.getElementById("menu-btn");
+const menuDropdown = document.getElementById("menu-dropdown");
+menuBtn.addEventListener("click", () => {
+  menuDropdown.style.display = menuDropdown.style.display === "flex" ? "none" : "flex";
+});
+document.addEventListener("click", e => {
+  if (!menuDropdown.contains(e.target) && !menuBtn.contains(e.target))
+    menuDropdown.style.display = "none";
+});
+
+/* ---- Load quiz list from weekly_quizzes.json ---- */
+let allQuestions = {};  /* quiz_title -> array of question objects */
+
+(async function init() {
+  try {
+    const res  = await fetch("weekly_quizzes.json");
+    const data = await res.json();
+    const picker = document.getElementById("quiz-picker");
+    picker.innerHTML = '<option value="">— Select a quiz —</option>';
+
+    data.weekly_quizzes.forEach(q => {
+      if (q.questions.length > 0) {
+        allQuestions[q.title] = q.questions;
+        const opt = document.createElement("option");
+        opt.value = q.title;
+        opt.textContent = q.title;
+        picker.appendChild(opt);
+      }
+    });
+
+    picker.addEventListener("change", () => {
+      if (picker.value) loadStats(picker.value);
+    });
+
+    /* Auto-select most recent quiz with questions */
+    const latest = data.weekly_quizzes.filter(q => q.questions.length > 0).pop();
+    if (latest) {
+      picker.value = latest.title;
+      loadStats(latest.title);
+    }
+  } catch(err) {
+    console.error("Failed to load quiz list:", err);
+  }
+})();
+
+/* ---- Load stats for selected quiz ---- */
+async function loadStats(quizTitle) {
+  document.getElementById("question-list").innerHTML = '<div class="loading-msg">Loading…</div>';
+  document.getElementById("lb-body").innerHTML = '<tr><td colspan="5" class="loading-msg">Loading…</td></tr>';
+  document.getElementById("highlights").style.display = "none";
+
+  const [lbData, qData] = await Promise.all([
+    fetchLeaderboard(quizTitle),
+    fetchQuestionStats(quizTitle)
+  ]);
+
+  renderSummary(lbData);
+  renderLeaderboard(lbData);
+  renderQuestions(quizTitle, qData);
+}
+
+async function fetchLeaderboard(quizTitle) {
+  try {
+    const res = await fetch(
+      `${SUPA_URL}/rest/v1/leaderboard?quiz_title=eq.${encodeURIComponent(quizTitle)}&order=score.desc,percent.desc&limit=20`,
+      { headers: { "apikey": SUPA_KEY, "Authorization": `Bearer ${SUPA_KEY}` } }
+    );
+    return await res.json();
+  } catch { return []; }
+}
+
+async function fetchQuestionStats(quizTitle) {
+  try {
+    const res = await fetch(
+      `${SUPA_URL}/rest/v1/question_stats?quiz_title=eq.${encodeURIComponent(quizTitle)}&select=question_id,correct,points_earned`,
+      { headers: { "apikey": SUPA_KEY, "Authorization": `Bearer ${SUPA_KEY}` } }
+    );
+    return await res.json();
+  } catch { return []; }
+}
+
+/* ---- Render summary cards ---- */
+function renderSummary(lb) {
+  if (!lb.length) {
+    document.getElementById("stat-players").textContent = "0";
+    document.getElementById("stat-avg").textContent = "—";
+    document.getElementById("stat-top").textContent = "—";
+    document.getElementById("stat-avg-pct").textContent = "—";
+    return;
+  }
+  const players = lb.length;
+  const avgScore = (lb.reduce((s, r) => s + r.score, 0) / players).toFixed(1);
+  const topScore = lb[0].score + " / " + lb[0].max_score;
+  const avgPct   = Math.round(lb.reduce((s, r) => s + r.percent, 0) / players) + "%";
+
+  document.getElementById("stat-players").textContent = players;
+  document.getElementById("stat-avg").textContent = avgScore;
+  document.getElementById("stat-top").textContent = topScore;
+  document.getElementById("stat-avg-pct").textContent = avgPct;
+}
+
+/* ---- Render leaderboard table ---- */
+function renderLeaderboard(lb) {
+  const tbody = document.getElementById("lb-body");
+  if (!lb.length) {
+    tbody.innerHTML = '<tr><td colspan="5" class="loading-msg">No scores yet</td></tr>';
+    return;
+  }
+  const medals = ["🥇","🥈","🥉"];
+  tbody.innerHTML = lb.map((r, i) => `
+    <tr>
+      <td>${medals[i] || (i+1)}</td>
+      <td>${escapeHtml(r.player_name)}</td>
+      <td>${r.score} / ${r.max_score}</td>
+      <td>${r.percent}%</td>
+      <td style="opacity:0.5;font-size:0.78rem;">${new Date(r.submitted_at).toLocaleDateString()}</td>
+    </tr>
+  `).join("");
+}
+
+/* ---- Render per-question breakdown ---- */
+function renderQuestions(quizTitle, qData) {
+  const qs = allQuestions[quizTitle] || [];
+  const list = document.getElementById("question-list");
+
+  if (!qData.length) {
+    list.innerHTML = '<div class="loading-msg">No question data yet — submit some scores first!</div>';
+    return;
+  }
+
+  /* Group by question_id */
+  const byId = {};
+  qData.forEach(row => {
+    if (!byId[row.question_id]) byId[row.question_id] = { correct: 0, total: 0 };
+    byId[row.question_id].total++;
+    if (row.correct) byId[row.question_id].correct++;
+  });
+
+  /* Build rows matched to question text */
+  const rows = qs.map(q => {
+    const stats = byId[q.id] || { correct: 0, total: 0 };
+    const pct = stats.total ? Math.round((stats.correct / stats.total) * 100) : null;
+    return { q, stats, pct };
+  }).filter(r => r.stats.total > 0);
+
+  if (!rows.length) {
+    list.innerHTML = '<div class="loading-msg">No question data yet — submit some scores first!</div>';
+    return;
+  }
+
+  /* Find hardest and easiest */
+  const withPct = rows.filter(r => r.pct !== null);
+  const hardest = withPct.reduce((a, b) => a.pct < b.pct ? a : b);
+  const easiest = withPct.reduce((a, b) => a.pct > b.pct ? a : b);
+
+  document.getElementById("hardest-q").textContent = hardest.q.text;
+  document.getElementById("hardest-pct").textContent = hardest.pct + "% got it right";
+  document.getElementById("easiest-q").textContent = easiest.q.text;
+  document.getElementById("easiest-pct").textContent = easiest.pct + "% got it right";
+  document.getElementById("highlights").style.display = "grid";
+
+  /* Sort by difficulty (hardest first) */
+  const sorted = [...rows].sort((a, b) => (a.pct ?? 50) - (b.pct ?? 50));
+
+  list.innerHTML = sorted.map(({ q, stats, pct }) => {
+    const difficulty = pct === null ? "medium" : pct >= 70 ? "easy" : pct >= 40 ? "medium" : "hard";
+    const displayPct = pct === null ? "—" : pct + "%";
+    return `
+      <div class="q-row">
+        <div class="q-row-top">
+          <div class="q-text">${escapeHtml(q.text)}</div>
+          <div class="q-pct ${difficulty}">${displayPct}</div>
+        </div>
+        <div class="q-bar-outer">
+          <div class="q-bar-inner ${difficulty}" style="width:${pct ?? 50}%"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:4px;">
+          <span class="q-tag">${q.tag || ""}</span>
+          <span class="q-tag">${stats.correct}/${stats.total} correct</span>
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+function escapeHtml(str) {
+  return str.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+</script>
+</body>
+</html>
