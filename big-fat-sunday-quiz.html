@@ -97,22 +97,6 @@
 
     .year-hint { font-size: 0.75rem; opacity: 0.65; margin-top: 3px; }
 
-    .btn-give-up {
-      padding: 8px 14px; border-radius: 999px;
-      border: 1px solid rgba(255, 100, 100, 0.5);
-      background: rgba(3,15,34,0.95); color: rgba(255,120,120,0.9);
-      font-size: 0.82rem; cursor: pointer; white-space: nowrap;
-    }
-    .btn-give-up:hover { background: rgba(255,66,102,0.15); border-color: var(--bad); }
-
-    @keyframes shake {
-      0%,100% { transform: translateX(0); }
-      20%      { transform: translateX(-6px); }
-      40%      { transform: translateX(6px); }
-      60%      { transform: translateX(-4px); }
-      80%      { transform: translateX(4px); }
-    }
-    .shake { animation: shake 0.4s ease; }
 
     .progress-wrap { max-width: 480px; margin: 0 auto 14px; text-align: left; font-size: 0.85rem; opacity: 0.9; }
     .progress-label { margin-bottom: 4px; display: flex; justify-content: space-between; gap: 8px; }
@@ -242,6 +226,8 @@ function levenshtein(a, b) {
 /* Returns true if the player's input matches a single target string */
 function fuzzyMatch(input, target) {
   if (input === target) return true;
+  /* must be at least 60% the length of the target to qualify for fuzzy matching */
+  if (input.length < Math.ceil(target.length * 0.6)) return false;
   /* substring containment — handles "the cheetah" matching "cheetah" */
   if (input.includes(target) || target.includes(input)) return true;
   /* allow 1 typo for words up to 6 chars, 2 typos for longer */
@@ -343,15 +329,8 @@ function renderTextExact(card, q, i) {
   btn.id = `btn-${i}`;
   btn.textContent = "Check";
   btn.onclick = () => checkTextExact(i);
-  const giveUp = document.createElement("button");
-  giveUp.className = "btn-give-up";
-  giveUp.id = `giveup-${i}`;
-  giveUp.textContent = "Give up";
-  giveUp.style.display = "none";
-  giveUp.onclick = () => giveUpTextExact(i);
   row.appendChild(input);
   row.appendChild(btn);
-  row.appendChild(giveUp);
   card.appendChild(row);
 }
 
@@ -442,25 +421,9 @@ function checkTextExact(i) {
   if (isCorrect(val, q)) {
     states[i].points = q.maxPoints;
     setFeedback(i, "\u2713 Correct!", "correct");
-    const giveUp = document.getElementById(`giveup-${i}`);
-    if (giveUp) giveUp.style.display = "none";
-    lockCard(i);
   } else {
-    setFeedback(i, "\u2717 Not quite \u2014 try again!", "incorrect");
-    input.value = "";
-    input.focus();
-    input.classList.add("shake");
-    setTimeout(() => input.classList.remove("shake"), 400);
-    const giveUp = document.getElementById(`giveup-${i}`);
-    if (giveUp) giveUp.style.display = "inline-block";
+    setFeedback(i, `\u2717 The answer was: ${q.correctAnswer}`, "incorrect");
   }
-}
-
-function giveUpTextExact(i) {
-  if (states[i].checked) return;
-  const q = questions[i];
-  setFeedback(i, `Answer: ${q.correctAnswer}`, "incorrect");
-  states[i].points = 0;
   lockCard(i);
 }
 
