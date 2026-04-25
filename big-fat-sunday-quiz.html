@@ -62,7 +62,6 @@
     .question-text { font-size: 0.97rem; font-weight: 500; margin-bottom: 10px; line-height: 1.45; }
     .question-tag { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.06em; opacity: 0.6; white-space: nowrap; }
 
-    /* MCQ OPTIONS */
     .options { margin-top: 8px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     @media (max-width: 640px) { .options { grid-template-columns: 1fr; } }
     .option-btn {
@@ -76,7 +75,6 @@
     .option-btn.correct { border-color: var(--good); box-shadow: 0 0 14px rgba(56,239,125,0.6); background: rgba(56,239,125,0.08); }
     .option-btn.wrong { border-color: var(--bad); box-shadow: 0 0 14px rgba(255,66,102,0.6); background: rgba(255,66,102,0.08); }
 
-    /* TEXT / NUMERIC INPUTS */
     .input-row { display: flex; gap: 8px; align-items: center; margin-top: 8px; flex-wrap: wrap; }
     .question-input {
       flex: 1; min-width: 160px; padding: 8px 14px; border-radius: 999px;
@@ -92,16 +90,13 @@
     .btn-check:disabled { opacity: 0.5; cursor: default; }
     .btn-check:hover:not(:disabled) { background: var(--neon-soft); color: #001; }
 
-    /* FEEDBACK */
     .feedback { margin-top: 8px; font-size: 0.85rem; min-height: 18px; font-weight: 500; }
     .feedback.correct { color: var(--good); }
     .feedback.incorrect { color: var(--bad); }
     .feedback.partial { color: #f5c542; }
 
-    /* YEAR hint */
     .year-hint { font-size: 0.75rem; opacity: 0.65; margin-top: 3px; }
 
-    /* PROGRESS */
     .progress-wrap { max-width: 480px; margin: 0 auto 14px; text-align: left; font-size: 0.85rem; opacity: 0.9; }
     .progress-label { margin-bottom: 4px; display: flex; justify-content: space-between; gap: 8px; }
     .progress-bar-outer { width: 100%; height: 10px; border-radius: 999px; background: rgba(4,20,40,0.9); border: 1px solid rgba(150,208,255,0.5); overflow: hidden; }
@@ -204,12 +199,48 @@ document.addEventListener("click", e => {
 
 /* ---- STATE ---- */
 let questions = [];
-let states = [];   // { checked, points, maxPoints }
+let states = [];
 
-const container  = document.getElementById("quiz-container");
-const scoreBox   = document.getElementById("score-box");
-const progText   = document.getElementById("progress-text");
-const progBar    = document.getElementById("progress-bar");
+const container = document.getElementById("quiz-container");
+const scoreBox  = document.getElementById("score-box");
+const progText  = document.getElementById("progress-text");
+const progBar   = document.getElementById("progress-bar");
+
+/* ================================================================
+   ANSWER MATCHING — fuzzy + acceptedAnswers
+   ================================================================ */
+
+/* Levenshtein distance between two strings */
+function levenshtein(a, b) {
+  const dp = Array.from({ length: a.length + 1 }, (_, i) =>
+    Array.from({ length: b.length + 1 }, (_, j) => i || j));
+  for (let i = 1; i <= a.length; i++)
+    for (let j = 1; j <= b.length; j++)
+      dp[i][j] = a[i-1] === b[j-1]
+        ? dp[i-1][j-1]
+        : 1 + Math.min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]);
+  return dp[a.length][b.length];
+}
+
+/* Returns true if the player's input matches a single target string */
+function fuzzyMatch(input, target) {
+  if (input === target) return true;
+  /* substring containment — handles "the cheetah" matching "cheetah" */
+  if (input.includes(target) || target.includes(input)) return true;
+  /* allow 1 typo for words up to 6 chars, 2 typos for longer */
+  const tolerance = target.length > 6 ? 2 : 1;
+  return levenshtein(input, target) <= tolerance;
+}
+
+/* Main check: tests the player's input against all accepted answers */
+function isCorrect(val, q) {
+  const input = val.trim().toLowerCase();
+  /* build list: acceptedAnswers array takes priority, falls back to correctAnswer */
+  const accepted = (q.acceptedAnswers && q.acceptedAnswers.length > 0)
+    ? q.acceptedAnswers.map(a => a.toLowerCase())
+    : [q.correctAnswer.toLowerCase()];
+  return accepted.some(target => fuzzyMatch(input, target));
+}
 
 /* ---- LOAD QUIZ ---- */
 (async function loadQuiz() {
@@ -244,30 +275,21 @@ function renderQuiz() {
     card.className = "question-card";
     card.id = `card-${i}`;
 
-    /* Question number + tag */
     const header = document.createElement("div");
     header.className = "question-header";
     header.innerHTML = `<span style="font-size:0.78rem;opacity:0.6;">Q${i+1} of ${questions.length}</span><span class="question-tag">${q.tag || ""}</span>`;
     card.appendChild(header);
 
-    /* Question text */
     const txt = document.createElement("div");
     txt.className = "question-text";
     txt.textContent = q.text;
     card.appendChild(txt);
 
-    /* Input area depends on type */
-    if (q.type === "mcq") {
-      renderMCQ(card, q, i);
-    } else if (q.type === "text-exact") {
-      renderTextExact(card, q, i);
-    } else if (q.type === "numeric") {
-      renderNumeric(card, q, i);
-    } else if (q.type === "year") {
-      renderYear(card, q, i);
-    }
+    if      (q.type === "mcq")        renderMCQ(card, q, i);
+    else if (q.type === "text-exact") renderTextExact(card, q, i);
+    else if (q.type === "numeric")    renderNumeric(card, q, i);
+    else if (q.type === "year")       renderYear(card, q, i);
 
-    /* Feedback div */
     const fb = document.createElement("div");
     fb.id = `feedback-${i}`;
     fb.className = "feedback";
@@ -354,7 +376,6 @@ function renderYear(card, q, i) {
 
 /* ---- CHECK FUNCTIONS ---- */
 function lockCard(i) {
-  /* Disable all inputs and buttons in this card */
   const card = document.getElementById(`card-${i}`);
   card.querySelectorAll("input, button.option-btn, button.btn-check").forEach(el => el.disabled = true);
   card.classList.add("answered");
@@ -373,12 +394,10 @@ function checkMCQ(i, chosen) {
   const q = questions[i];
   const card = document.getElementById(`card-${i}`);
   const btns = card.querySelectorAll(".option-btn");
-
   btns.forEach((btn, bi) => {
-    if (bi === q.correctIndex) btn.classList.add("correct");
-    else if (bi === chosen)    btn.classList.add("wrong");
+    if (bi === q.correctIndex)  btn.classList.add("correct");
+    else if (bi === chosen)     btn.classList.add("wrong");
   });
-
   if (chosen === q.correctIndex) {
     states[i].points = q.maxPoints;
     setFeedback(i, "✓ Correct!", "correct");
@@ -392,12 +411,11 @@ function checkTextExact(i) {
   if (states[i].checked) return;
   const q = questions[i];
   const input = document.getElementById(`input-${i}`);
-  const val = input.value.trim().toLowerCase();
+  const val = input.value;
 
-  if (!val) { setFeedback(i, "Please type an answer first.", ""); return; }
+  if (!val.trim()) { setFeedback(i, "Please type an answer first.", ""); return; }
 
-  const correct = q.correctAnswer.toLowerCase();
-  if (val === correct) {
+  if (isCorrect(val, q)) {
     states[i].points = q.maxPoints;
     setFeedback(i, "✓ Correct!", "correct");
   } else {
@@ -472,11 +490,8 @@ function updateProgress() {
 /* ---- JUMP TO UNANSWERED ---- */
 document.getElementById("jump-unanswered").addEventListener("click", () => {
   const idx = states.findIndex(s => !s.checked);
-  if (idx === -1) {
-    scoreBox.scrollIntoView({ behavior: "smooth" });
-  } else {
-    document.getElementById(`card-${idx}`).scrollIntoView({ behavior: "smooth", block: "center" });
-  }
+  if (idx === -1) scoreBox.scrollIntoView({ behavior: "smooth" });
+  else document.getElementById(`card-${idx}`).scrollIntoView({ behavior: "smooth", block: "center" });
 });
 
 /* ---- SHARE ---- */
