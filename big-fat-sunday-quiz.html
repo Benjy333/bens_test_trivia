@@ -503,7 +503,7 @@ function buildShareText() {
   const maxPts = states.reduce((s, x) => s + x.maxPoints, 0);
   const pct    = maxPts ? Math.round((earned / maxPts) * 100) : 0;
   const title  = document.getElementById("quiz-title").textContent;
-  return `${title}\n${earned}/${maxPts} (${pct}%)\nhttps://benjy333.github.io/Bens-Trivia/big-fat-sunday-quiz.html`;
+  return `I just played "${title}" on Ben's Trivia!\n\nMy score: ${earned}/${maxPts} (${pct}%)\n\nTry to beat my score:\nhttps://benjy333.github.io/Bens-Trivia/big-fat-sunday-quiz.html`;
 }
 
 document.getElementById("share-whatsapp").addEventListener("click", () => {
