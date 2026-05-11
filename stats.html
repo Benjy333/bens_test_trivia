@@ -13,7 +13,7 @@
       backdrop-filter: blur(10px);
       border-bottom: 1px solid rgba(150, 208, 255, 0.3);
     }
-    .header-row-top { display: flex; align-items: center; gap: 12px; }
+    .header-row-top { display: flex; align-items: center; justify-content: space-between; }
     .header-logo { height: 52px; width: auto; filter: drop-shadow(0 0 8px var(--neon)) drop-shadow(0 0 18px var(--neon-soft)); }
     .header-row-bottom { margin-top: 6px; text-align: center; }
     .page-title { margin: 0; font-size: 1.1rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text); text-shadow: 0 0 8px var(--neon-soft); }
@@ -115,16 +115,13 @@
   <header class="global-header">
     <div class="header-row-top">
       <button id="menu-btn">☰</button>
-      <img src="logo.png" class="header-logo" alt="Ben's Trivia Logo">
+      <img src="logo.png" class="header-logo" alt="Ben's Trivia Logo" style="position:absolute;left:50%;transform:translateX(-50%);">
+      <div style="width:52px;"></div>
     </div>
     <div class="header-row-bottom">
       <h1 class="page-title">📊 Quiz Stats</h1>
     </div>
     <nav class="menu-dropdown" id="menu-dropdown">
-      <a href="index.html">🎯 Daily Trivia</a>
-      <a href="anagram.html">🔤 Anagram Game</a>
-      <a href="riddle.html">🕵️ Riddle Game</a>
-      <a href="connections.html">🧩 Connections</a>
       <a href="big-fat-sunday-quiz.html">🍻 Big Fat Sunday Quiz</a>
       <a href="stats.html">📊 Quiz Stats</a>
     </nav>
@@ -165,14 +162,6 @@
         </div>
       </div>
 
-      <!-- Per-question breakdown -->
-      <div class="card">
-        <div class="section-heading">Question Breakdown</div>
-        <div class="question-list" id="question-list">
-          <div class="loading-msg">Select a quiz above to load stats</div>
-        </div>
-      </div>
-
       <!-- Leaderboard -->
       <div class="card">
         <div class="section-heading">Top Scores</div>
@@ -184,6 +173,14 @@
             <tr><td colspan="5" class="loading-msg">Select a quiz above</td></tr>
           </tbody>
         </table>
+      </div>
+
+      <!-- Per-question breakdown -->
+      <div class="card">
+        <div class="section-heading">Question Breakdown</div>
+        <div class="question-list" id="question-list">
+          <div class="loading-msg">Select a quiz above to load stats</div>
+        </div>
       </div>
 
     </div>
@@ -215,12 +212,18 @@ let allQuestions = {};  /* quiz_title -> array of question objects */
     const picker = document.getElementById("quiz-picker");
     picker.innerHTML = '<option value="">— Select a quiz —</option>';
 
+    /* Work out which quiz is current using Brisbane time anchor (1am Sun AEST = 15:00 Sat UTC) */
+    const base = new Date("2026-04-18T15:00:00Z");
+    const diffMs = Date.now() - base.getTime();
+    const weekIdx = Math.min(Math.max(Math.floor(diffMs / (7 * 86400000)), 0), data.weekly_quizzes.length - 1);
+    const currentTitle = data.weekly_quizzes[weekIdx].title;
+
     data.weekly_quizzes.forEach(q => {
       if (q.questions.length > 0) {
         allQuestions[q.title] = q.questions;
         const opt = document.createElement("option");
         opt.value = q.title;
-        opt.textContent = q.title;
+        opt.textContent = q.title + (q.title === currentTitle ? " ← This Week" : "");
         picker.appendChild(opt);
       }
     });
@@ -229,11 +232,14 @@ let allQuestions = {};  /* quiz_title -> array of question objects */
       if (picker.value) loadStats(picker.value);
     });
 
-    /* Auto-select most recent quiz with questions */
-    const latest = data.weekly_quizzes.filter(q => q.questions.length > 0).pop();
-    if (latest) {
-      picker.value = latest.title;
-      loadStats(latest.title);
+    /* Auto-select the current week's quiz */
+    if (allQuestions[currentTitle]) {
+      picker.value = currentTitle;
+      loadStats(currentTitle);
+    } else {
+      /* Fallback to most recent with questions */
+      const latest = data.weekly_quizzes.filter(q => q.questions.length > 0).pop();
+      if (latest) { picker.value = latest.title; loadStats(latest.title); }
     }
   } catch(err) {
     console.error("Failed to load quiz list:", err);
@@ -256,22 +262,41 @@ async function loadStats(quizTitle) {
   renderQuestions(quizTitle, qData);
 }
 
+/* Work out the start/end of a given week for date filtering */
+function getWeekRange(quizTitle) {
+  /* Base: 1am Sunday Brisbane (AEST UTC+10) = 15:00 Saturday UTC */
+  const base = new Date("2026-04-18T15:00:00Z");
+  const picker = document.getElementById("quiz-picker");
+  const opts   = [...picker.options].filter(o => o.value);
+  const selIdx = opts.findIndex(o => o.value === quizTitle);
+  const idx    = selIdx >= 0 ? selIdx : 0;
+  const weekStart = new Date(base.getTime() + idx * 7 * 86400000);
+  const weekEnd   = new Date(weekStart.getTime() + 7 * 86400000);
+  return { weekStart, weekEnd };
+}
+
 async function fetchLeaderboard(quizTitle) {
   try {
-    const res = await fetch(
-      `${SUPA_URL}/rest/v1/leaderboard?quiz_title=eq.${encodeURIComponent(quizTitle)}&order=score.desc,percent.desc&limit=20`,
-      { headers: { "apikey": SUPA_KEY, "Authorization": `Bearer ${SUPA_KEY}` } }
-    );
+    const { weekStart, weekEnd } = getWeekRange(quizTitle);
+    const url = `${SUPA_URL}/rest/v1/leaderboard`
+      + `?quiz_title=eq.${encodeURIComponent(quizTitle)}`
+      + `&submitted_at=gte.${weekStart.toISOString()}`
+      + `&submitted_at=lt.${weekEnd.toISOString()}`
+      + `&order=score.desc,percent.desc&limit=100`;
+    const res = await fetch(url, { headers: { "apikey": SUPA_KEY, "Authorization": `Bearer ${SUPA_KEY}` } });
     return await res.json();
   } catch { return []; }
 }
 
 async function fetchQuestionStats(quizTitle) {
   try {
-    const res = await fetch(
-      `${SUPA_URL}/rest/v1/question_stats?quiz_title=eq.${encodeURIComponent(quizTitle)}&select=question_id,correct,points_earned`,
-      { headers: { "apikey": SUPA_KEY, "Authorization": `Bearer ${SUPA_KEY}` } }
-    );
+    const { weekStart, weekEnd } = getWeekRange(quizTitle);
+    const url = `${SUPA_URL}/rest/v1/question_stats`
+      + `?quiz_title=eq.${encodeURIComponent(quizTitle)}`
+      + `&submitted_at=gte.${weekStart.toISOString()}`
+      + `&submitted_at=lt.${weekEnd.toISOString()}`
+      + `&select=question_id,correct,points_earned`;
+    const res = await fetch(url, { headers: { "apikey": SUPA_KEY, "Authorization": `Bearer ${SUPA_KEY}` } });
     return await res.json();
   } catch { return []; }
 }
@@ -304,15 +329,37 @@ function renderLeaderboard(lb) {
     return;
   }
   const medals = ["🥇","🥈","🥉"];
-  tbody.innerHTML = lb.map((r, i) => `
-    <tr>
-      <td>${medals[i] || (i+1)}</td>
-      <td>${escapeHtml(r.player_name)}</td>
-      <td>${r.score} / ${r.max_score}</td>
-      <td>${r.percent}%</td>
-      <td style="opacity:0.5;font-size:0.78rem;">${new Date(r.submitted_at).toLocaleDateString()}</td>
-    </tr>
-  `).join("");
+  let ranks = [];
+  let currentRank = 0;
+  lb.forEach((r, i) => {
+    if (i === 0 || r.score !== lb[i-1].score || r.percent !== lb[i-1].percent) {
+      currentRank = i;
+    }
+    ranks.push(currentRank);
+  });
+
+  /* Show top 10 (including all ties within that range) */
+  const top10 = lb.filter((r, i) => i < 10 || ranks[i] === ranks[9]);
+
+  let html = top10.map((r, i) => {
+    const rank = ranks[i];
+    const medal = medals[rank];
+    const suffix = (rank+1) === 1 ? "st" : (rank+1) === 2 ? "nd" : (rank+1) === 3 ? "rd" : "th";
+    const rankDisplay = medal || `${rank+1}${suffix}`;
+    const rowStyle = rank <= 2 ? "" : "opacity:0.8;";
+    return `
+      <tr style="${rowStyle}">
+        <td>${rankDisplay}</td>
+        <td>${escapeHtml(r.player_name)}</td>
+        <td>${r.score} / ${r.max_score}</td>
+        <td>${r.percent}%</td>
+        <td style="opacity:0.5;font-size:0.78rem;">${new Date(r.submitted_at).toLocaleDateString()}</td>
+      </tr>
+    `;
+  }).join("");
+
+  html += `<tr><td colspan="5" style="text-align:center;font-size:0.75rem;opacity:0.5;padding:8px 0;">${lb.length} players total</td></tr>`;
+  tbody.innerHTML = html;
 }
 
 /* ---- Render per-question breakdown ---- */
