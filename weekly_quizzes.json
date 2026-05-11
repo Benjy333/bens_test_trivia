@@ -1,5 +1,5 @@
 {
-  "start_date": "2026-04-18",
+  "start_date": "2026-04-25",
   "weekly_quizzes": [
     {
       "title": "Big Fat Sunday Quiz #1",
@@ -122,7 +122,9 @@
         { "id": "school-sports-neither", "type": "numeric", "tag": "Maths", "text": "A school has 120 students. 75 play baseball, 60 play soccer, and 30 play both. How many students play neither sport?", "correctNumber": 15, "maxPoints": 1 }
       ]},
     { "title": "Big Fat Sunday Quiz #5", "questions": [
-       
+    
+        
+        {"id": "top-5-musicals","type": "multi-text","tag": "Musicals","text": "Name the 5 biggest Broadway musicals of all time (1 point each)", "answers": ["the lion king", "wicked", "hamilton", "chicago", "the phantom of the opera"],"acceptedAnswers": [ ["the lion king", "lion king"],["wicked"],["hamilton"], ["chicago"],["the phantom of the opera", "phantom of the opera", "phantom"] ], "maxPoints": 5}
         { "id": "no-land-border-russia", "type": "mcq", "tag": "Geography", "text": "Which country has no land border with Russia: Mongolia, North Korea, Norway or Uzbekistan?", "options": ["Mongolia", "North Korea", "Norway", "Uzbekistan"], "correctIndex": 3, "maxPoints": 1 },
         { "id": "simpsons-beatle", "type": "mcq", "tag": "TV", "text": "In an episode of The Simpsons, Marge belatedly receives a letter from which Beatle?", "options": ["John Lennon", "Paul McCartney", "George Harrison", "Ringo Starr"], "correctIndex": 3, "maxPoints": 1 },
         { "id": "nictitating-membrane", "type": "text-exact", "tag": "Animals", "text": "Found in many animals, the nictitating membrane is also known as the third … what?", "correctAnswer": "eyelid", "acceptedAnswers": ["eyelid", "the third eyelid"], "maxPoints": 1 },
