@@ -147,7 +147,6 @@
         { "id": "louie-the-fly", "type": "text-exact", "tag": "General knowledge", "text": "Author Bryce Courtenay created which iconic company mascot in 1957?", "correctAnswer": "louie the fly", "acceptedAnswers": ["louie the fly", "louie", "the fly"], "maxPoints": 1 },
         { "id": "most-common-letter", "type": "text-exact", "tag": "Language", "text": "What is the most commonly used letter in the English alphabet?", "correctAnswer": "e", "acceptedAnswers": ["e"], "maxPoints": 1 },
         { "id": "capital-algeria", "type": "text-exact", "tag": "Geography", "text": "What is the capital of Algeria?", "correctAnswer": "algiers", "acceptedAnswers": ["algiers"], "maxPoints": 1 },
-        { "id": "colour-blindness-gender", "type": "mcq", "tag": "Biology", "text": "Is colour-blindness more prevalent in men or women?", "options": ["Men", "Women"], "correctIndex": 0, "maxPoints": 1 },
         { "id": "colour-blindness-gender", "type": "mcq", "tag": "Biology", "text": "Is colour-blindness more prevalent in men or women?", "options": ["Men", "Women"], "correctIndex": 0, "maxPoints": 1 }
     ] },
     { "title": "Big Fat Sunday Quiz #6", "questions": [] },
