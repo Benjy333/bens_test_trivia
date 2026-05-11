@@ -275,24 +275,32 @@
         </div>
         <div id="submit-status" class="lb-status"></div>
 
-        <div class="lb-tabs">
-          <button class="lb-tab active" id="tab-week" onclick="switchTab('week')">This Week</button>
-          <button class="lb-tab" id="tab-all" onclick="switchTab('all')">All Time</button>
+        <!-- Leaderboard locked until name submitted -->
+        <div id="leaderboard-locked" style="text-align:center;padding:24px 16px;opacity:0.7;">
+          <div style="font-size:1.5rem;margin-bottom:8px;">🔒</div>
+          <div style="font-size:0.88rem;">Enter your name and submit your score to unlock the leaderboard</div>
         </div>
 
-        <table class="leaderboard-table">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Name</th>
-              <th>Score</th>
-              <th>%</th>
-            </tr>
-          </thead>
-          <tbody id="leaderboard-body">
-            <tr><td colspan="4" style="text-align:center;opacity:0.5;padding:16px;">Loading…</td></tr>
-          </tbody>
-        </table>
+        <div id="leaderboard-unlocked" style="display:none;">
+          <div class="lb-tabs">
+            <button class="lb-tab active" id="tab-week" onclick="switchTab('week')">This Week</button>
+            <button class="lb-tab" id="tab-all" onclick="switchTab('all')">All Time</button>
+          </div>
+
+          <table class="leaderboard-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Score</th>
+                <th>%</th>
+              </tr>
+            </thead>
+            <tbody id="leaderboard-body">
+              <tr><td colspan="4" style="text-align:center;opacity:0.5;padding:16px;">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <!-- INSTAGRAM HANDLE -->
@@ -393,6 +401,9 @@ function isCorrect(val, q) {
 function getSaveKey(quizTitle) {
   return `bens-trivia-progress:${quizTitle}`;
 }
+function getSubmitKey(quizTitle) {
+  return `bens-trivia-submitted:${quizTitle}`;
+}
 
 function saveProgress(quizTitle) {
   const save = {
@@ -400,6 +411,18 @@ function saveProgress(quizTitle) {
     states: states.map(s => ({ checked: s.checked, points: s.points, maxPoints: s.maxPoints }))
   };
   try { localStorage.setItem(getSaveKey(quizTitle), JSON.stringify(save)); } catch(e) {}
+}
+
+function saveSubmission(quizTitle, name) {
+  try { localStorage.setItem(getSubmitKey(quizTitle), name); } catch(e) {}
+}
+
+function loadSubmission(quizTitle) {
+  try { return localStorage.getItem(getSubmitKey(quizTitle)) || null; } catch(e) { return null; }
+}
+
+function clearSubmission(quizTitle) {
+  try { localStorage.removeItem(getSubmitKey(quizTitle)); } catch(e) {}
 }
 
 function loadSavedProgress(quizTitle) {
@@ -425,10 +448,12 @@ function clearOldSaves(currentTitle, allTitles) {
     const data = await res.json();
 
     data_start_date = data.start_date;
-    const start    = new Date(data.start_date);
-    const diffDays = Math.floor((Date.now() - start) / 86400000);
-    const weekIdx  = Math.min(Math.floor(diffDays / 7), data.weekly_quizzes.length - 1);
-    const quiz     = data.weekly_quizzes[weekIdx];
+
+    /* Quiz switches at 1am Sunday Brisbane (AEST = UTC+10) = 15:00 Saturday UTC */
+    const base    = new Date("2026-04-18T15:00:00Z");
+    const diffMs  = Date.now() - base.getTime();
+    const weekIdx = Math.min(Math.max(Math.floor(diffMs / (7 * 86400000)), 0), data.weekly_quizzes.length - 1);
+    const quiz    = data.weekly_quizzes[weekIdx];
 
     questions = quiz.questions;
     document.getElementById("quiz-title").textContent = quiz.title;
@@ -450,6 +475,7 @@ function clearOldSaves(currentTitle, allTitles) {
     renderQuiz();
 
     /* Restore answered state visually */
+    currentQuizTitle = quiz.title;
     if (saved && saved.states) restoreAnswers();
 
     updateProgress();
@@ -520,7 +546,18 @@ function restoreAnswers() {
   const allDone = states.every(s => s.checked);
   if (allDone) {
     document.getElementById("share-panel").style.display = "flex";
+    document.getElementById("instagram-handle").style.display = "block";
     showLeaderboard();
+    /* Restore submitted state if they already submitted this week */
+    const savedName = loadSubmission(currentQuizTitle);
+    if (savedName) {
+      scoreSubmitted = true;
+      document.getElementById("player-name").value = savedName;
+      document.getElementById("submit-row").style.display = "none";
+      document.getElementById("submit-status").textContent = `✓ Already submitted as ${savedName}`;
+      document.getElementById("leaderboard-locked").style.display = "none";
+      document.getElementById("leaderboard-unlocked").style.display = "block";
+    }
   }
 }
 
@@ -879,32 +916,6 @@ function showLeaderboard() {
   document.getElementById("leaderboard-section").style.display = "block";
   currentQuizTitle = document.getElementById("quiz-title").textContent;
   loadLeaderboard();
-  autoSubmitQuestionStats();
-}
-
-/* Silently submit question stats without requiring a name */
-let questionStatsSubmitted = false;
-async function autoSubmitQuestionStats() {
-  if (questionStatsSubmitted) return;
-  questionStatsSubmitted = true;
-  try {
-    const questionRows = questions.map((q, i) => ({
-      quiz_title: currentQuizTitle,
-      question_id: q.id,
-      correct: states[i].points > 0,
-      points_earned: states[i].points
-    }));
-    await fetch(`${SUPA_URL}/rest/v1/question_stats`, {
-      method: "POST",
-      headers: {
-        "apikey": SUPA_KEY,
-        "Authorization": `Bearer ${SUPA_KEY}`,
-        "Content-Type": "application/json",
-        "Prefer": "return=minimal"
-      },
-      body: JSON.stringify(questionRows)
-    });
-  } catch(e) { /* silent fail */ }
 }
 
 /* Switch between This Week / All Time tabs */
@@ -925,10 +936,11 @@ async function loadLeaderboard() {
     let url = `${SUPA_URL}/rest/v1/leaderboard?select=player_name,score,max_score,percent,submitted_at&order=score.desc,percent.desc&limit=100`;
 
     if (currentTab === "week") {
-      const start = new Date(data_start_date);
-      const diffDays = Math.floor((Date.now() - start) / 86400000);
-      const weekIdx = Math.floor(diffDays / 7);
-      const weekStart = new Date(start.getTime() + weekIdx * 7 * 86400000);
+      /* Brisbane-anchored: base is 2026-04-18 15:00 UTC = 1am Sun 19 Apr Brisbane */
+      const base = new Date("2026-04-18T15:00:00Z");
+      const diffMs = Date.now() - base.getTime();
+      const weekIdx = Math.max(Math.floor(diffMs / (7 * 86400000)), 0);
+      const weekStart = new Date(base.getTime() + weekIdx * 7 * 86400000);
       const weekEnd   = new Date(weekStart.getTime() + 7 * 86400000);
       url += `&quiz_title=eq.${encodeURIComponent(currentQuizTitle)}`;
       url += `&submitted_at=gte.${weekStart.toISOString()}`;
@@ -958,10 +970,11 @@ async function loadLeaderboard() {
     });
 
     const medals = ["🥇","🥈","🥉"];
-    const top3 = rows.slice(0, 3);
 
-    /* Show only top 3 */
-    tbody.innerHTML = top3.map((r, i) => `
+    /* Show top 3 ranks but include all tied players on the podium */
+    const podium = rows.filter((r, i) => ranks[i] <= 2);
+
+    tbody.innerHTML = podium.map((r, i) => `
       <tr>
         <td><span class="rank-medal">${medals[ranks[i]] || (ranks[i]+1)}</span></td>
         <td>${escapeHtml(r.player_name)}</td>
@@ -971,35 +984,30 @@ async function loadLeaderboard() {
     `).join("");
 
     /* Show user's own rank if they submitted and are outside top 3 */
+    /* Always show total player count */
+    tbody.innerHTML += `<tr><td colspan="4" style="text-align:center;font-size:0.75rem;opacity:0.5;padding:8px 0;">${rows.length} player${rows.length !== 1 ? "s" : ""} this week</td></tr>`;
+
+    /* Show user's rank if they submitted */
     const submittedName = document.getElementById("player-name").value.trim();
     if (submittedName && scoreSubmitted) {
       const earned = states.reduce((s, x) => s + x.points, 0);
       const maxPts = states.reduce((s, x) => s + x.maxPoints, 0);
-      const userIdx = rows.findIndex(r =>
-        r.player_name === submittedName &&
-        r.score === earned &&
-        r.max_score === maxPts
-      );
-      if (userIdx >= 3) {
+      /* Find user's best entry (highest score matching their name) */
+      const userIdx = rows.findIndex(r => r.player_name === submittedName);
+      const podiumSize = rows.filter((r, i) => ranks[i] <= 2).length;
+      if (userIdx !== -1 && userIdx >= podiumSize) {
         const userRank = ranks[userIdx] + 1;
-        const total = rows.length;
         const suffix = userRank === 1 ? "st" : userRank === 2 ? "nd" : userRank === 3 ? "rd" : "th";
         tbody.innerHTML += `
-          <tr><td colspan="4" style="text-align:center;opacity:0.4;padding:6px 0;font-size:0.75rem;">···</td></tr>
-          <tr style="opacity:0.85;">
-            <td style="color:var(--neon-soft);">${userRank}${suffix}</td>
-            <td style="color:var(--neon-soft);">${escapeHtml(submittedName)} (you)</td>
-            <td>${earned} / ${maxPts}</td>
-            <td>${maxPts ? Math.round((earned/maxPts)*100) : 0}%</td>
+          <tr><td colspan="4" style="text-align:center;opacity:0.4;padding:4px 0;font-size:0.75rem;">···</td></tr>
+          <tr>
+            <td style="color:var(--neon-soft);font-weight:600;">${userRank}${suffix}</td>
+            <td style="color:var(--neon-soft);font-weight:600;">${escapeHtml(submittedName)} (you)</td>
+            <td style="color:var(--neon-soft);">${rows[userIdx].score} / ${rows[userIdx].max_score}</td>
+            <td style="color:var(--neon-soft);">${rows[userIdx].percent}%</td>
           </tr>
-          <tr><td colspan="4" style="text-align:center;font-size:0.75rem;opacity:0.5;padding:4px 0;">${total} players this week</td></tr>
         `;
-      } else if (userIdx !== -1) {
-        /* User is in top 3, just show total count */
-        tbody.innerHTML += `<tr><td colspan="4" style="text-align:center;font-size:0.75rem;opacity:0.5;padding:8px 0;">${rows.length} players this week</td></tr>`;
       }
-    } else if (rows.length > 3) {
-      tbody.innerHTML += `<tr><td colspan="4" style="text-align:center;font-size:0.75rem;opacity:0.5;padding:8px 0;">${rows.length} players this week</td></tr>`;
     }
 
   } catch(err) {
@@ -1042,8 +1050,29 @@ document.getElementById("btn-submit-score").addEventListener("click", async () =
 
     if (res.ok) {
       scoreSubmitted = true;
+      saveSubmission(currentQuizTitle, name);
+      /* Log per-question stats tied to this leaderboard submission */
+      const questionRows = questions.map((q, i) => ({
+        quiz_title: currentQuizTitle,
+        question_id: q.id,
+        correct: states[i].points > 0,
+        points_earned: states[i].points
+      }));
+      fetch(`${SUPA_URL}/rest/v1/question_stats`, {
+        method: "POST",
+        headers: {
+          "apikey": SUPA_KEY,
+          "Authorization": `Bearer ${SUPA_KEY}`,
+          "Content-Type": "application/json",
+          "Prefer": "return=minimal"
+        },
+        body: JSON.stringify(questionRows)
+      });
       document.getElementById("submit-status").textContent = `✓ Score submitted! Good luck, ${name}!`;
       document.getElementById("submit-row").style.display = "none";
+      /* Unlock leaderboard */
+      document.getElementById("leaderboard-locked").style.display = "none";
+      document.getElementById("leaderboard-unlocked").style.display = "block";
       loadLeaderboard();
     } else {
       btn.disabled = false;
@@ -1069,15 +1098,17 @@ function escapeHtml(str) {
 /* ---- RESTART ---- */
 document.getElementById("btn-restart").addEventListener("click", () => {
   const quizTitle = document.getElementById("quiz-title").textContent;
-  /* Clear saved progress */
+  /* Clear saved progress and submission */
   try { localStorage.removeItem(getSaveKey(quizTitle)); } catch(e) {}
+  clearSubmission(quizTitle);
   /* Reset states */
   states = questions.map(q => ({ checked: false, points: 0, maxPoints: q.maxPoints || 1, chosenIndex: null, chosenValue: null }));
   scoreSubmitted = false;
-  questionStatsSubmitted = false;
   /* Hide end panels */
   document.getElementById("share-panel").style.display = "none";
   document.getElementById("leaderboard-section").style.display = "none";
+  document.getElementById("leaderboard-locked").style.display = "block";
+  document.getElementById("leaderboard-unlocked").style.display = "none";
   document.getElementById("instagram-handle").style.display = "none";
   /* Reset sticky bar */
   document.getElementById("ss-bar").style.width = "0%";
