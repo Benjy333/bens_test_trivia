@@ -702,7 +702,7 @@ async function loadLeaderboard() {
   try {
     let url = `${SUPA_URL}/rest/v1/leaderboard?select=player_name,score,max_score,percent,submitted_at&order=score.desc,percent.desc&limit=100`;
     if (currentTab === "week") {
-      const base = new Date("2026-03-21T15:00:00Z"); /* TEMP */ const diffMs = Date.now() - base.getTime(); const weekIdx = Math.max(Math.floor(diffMs / (7 * 86400000)), 0);
+      const base = new Date("2026-04-11T15:00:00Z"); /* TEMP */ const diffMs = Date.now() - base.getTime(); const weekIdx = Math.max(Math.floor(diffMs / (7 * 86400000)), 0);
       const weekStart = new Date(base.getTime() + weekIdx * 7 * 86400000); const weekEnd = new Date(weekStart.getTime() + 7 * 86400000);
       url += `&quiz_title=eq.${encodeURIComponent(currentQuizTitle)}&submitted_at=gte.${weekStart.toISOString()}&submitted_at=lt.${weekEnd.toISOString()}`;
     } else { url += `&quiz_title=eq.${encodeURIComponent(currentQuizTitle)}`; }
