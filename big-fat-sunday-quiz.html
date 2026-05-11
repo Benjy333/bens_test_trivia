@@ -281,7 +281,7 @@ function clearOldSaves(currentTitle, allTitles) { allTitles.forEach(title => { i
     const res  = await fetch("weekly_quizzes.json");
     const data = await res.json();
     data_start_date = data.start_date;
-    const base    = new Date("2026-04-18T15:00:00Z");
+    const base    = new Date("2026-03-21T15:00:00Z"); /* TEMP for testing — change back to 2026-04-18T15:00:00Z after */
     const diffMs  = Date.now() - base.getTime();
     const weekIdx = Math.min(Math.max(Math.floor(diffMs / (7 * 86400000)), 0), data.weekly_quizzes.length - 1);
     const quiz    = data.weekly_quizzes[weekIdx];
@@ -702,7 +702,7 @@ async function loadLeaderboard() {
   try {
     let url = `${SUPA_URL}/rest/v1/leaderboard?select=player_name,score,max_score,percent,submitted_at&order=score.desc,percent.desc&limit=100`;
     if (currentTab === "week") {
-      const base = new Date("2026-04-18T15:00:00Z"); const diffMs = Date.now() - base.getTime(); const weekIdx = Math.max(Math.floor(diffMs / (7 * 86400000)), 0);
+      const base = new Date("2026-03-21T15:00:00Z"); /* TEMP */ const diffMs = Date.now() - base.getTime(); const weekIdx = Math.max(Math.floor(diffMs / (7 * 86400000)), 0);
       const weekStart = new Date(base.getTime() + weekIdx * 7 * 86400000); const weekEnd = new Date(weekStart.getTime() + 7 * 86400000);
       url += `&quiz_title=eq.${encodeURIComponent(currentQuizTitle)}&submitted_at=gte.${weekStart.toISOString()}&submitted_at=lt.${weekEnd.toISOString()}`;
     } else { url += `&quiz_title=eq.${encodeURIComponent(currentQuizTitle)}`; }
@@ -768,7 +768,7 @@ document.getElementById("btn-restart").addEventListener("click", () => {
   window.scrollTo({ top: 0, behavior: "smooth" });
 });
 
-let data_start_date = "2026-03-21";
+let data_start_date = "2026-04-18";
 </script>
 </body>
 </html>
