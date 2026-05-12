@@ -123,7 +123,35 @@
       ]},
     { "title": "Big Fat Sunday Quiz #5", "questions": [
     
-        
+        { "id": "top-dog-breeds", "type": "multi-text", "tag": "Animals", "text": "Name 5 of the top 10 dog breeds found around the world (excluding Labrador and Golden Retriever)", "answers": ["french bulldog", "german shepherd", "poodle", "bulldog", "rottweiler", "beagle", "dachshund", "german shorthaired pointer"], "acceptedAnswers": [["french bulldog", "french bull dog"], ["german shepherd", "alsatian"], ["poodle"], ["bulldog", "english bulldog", "british bulldog"], ["rottweiler"], ["beagle"], ["dachshund", "dachsund", "sausage dog"], ["german shorthaired pointer", "gsp"]], "maxPoints": 5 },
+        { "id": "rugby-number-10", "type": "mcq", "tag": "Sport", "text": "What position is given to the number 10 in Rugby Union?", "options": ["Scrum-half", "Fly-half", "Inside centre", "Fullback"], "correctIndex": 1, "maxPoints": 1 },
+        { "id": "roman-numeral-10", "type": "text-exact", "tag": "Culture", "text": "What is the Roman numeral for 10?", "correctAnswer": "X", "acceptedAnswers": ["X", "x"], "maxPoints": 1 },
+        { "id": "zodiac-10th", "type": "text-exact", "tag": "Zodiac", "text": "What is the 10th zodiac sign, running from December 22 to January 19?", "correctAnswer": "capricorn", "acceptedAnswers": ["capricorn", "capricornus"], "maxPoints": 1 },
+        { "id": "anagram-alric-elevenfold", "type": "text-exact", "tag": "Wordplay", "text": "Which 2010s movie is an anagram of 'Alric Elevenfold 10'?", "correctAnswer": "10 cloverfield lane", "acceptedAnswers": ["10 cloverfield lane", "cloverfield lane"], "maxPoints": 1 },
+        { "id": "top-radio-song-2010s", "type": "mcq", "tag": "Music", "text": "Which song was the number one most-played radio song in the US in the 2010s?", "options": ["Uptown Funk", "TiK ToK", "Rolling in the Deep", "Somebody That I Used to Know"], "correctIndex": 1, "maxPoints": 1 },
+        { "id": "ph-scale-10", "type": "mcq", "tag": "Science", "text": "On the pH scale, is a solution with a pH of 10 acidic, neutral, or alkaline?", "options": ["Acidic", "Neutral", "Alkaline"], "correctIndex": 2, "maxPoints": 1 },
+        { "id": "10-things-shakespeare", "type": "text-exact", "tag": "Movies", "text": "Which Shakespeare play does '10 Things I Hate About You' follow?", "correctAnswer": "the taming of the shrew", "acceptedAnswers": ["the taming of the shrew", "taming of the shrew"], "maxPoints": 1 },
+        { "id": "10-downing-street", "type": "text-exact", "tag": "Politics", "text": "10 Downing Street is the official residence of whom?", "correctAnswer": "the prime minister", "acceptedAnswers": ["the prime minister", "prime minister", "uk prime minister", "british prime minister", "the pm", "pm"], "maxPoints": 1 },
+        { "id": "windows-10-year", "type": "year", "tag": "Tech", "text": "In what year was Windows 10 released?", "correctYear": 2015, "maxPoints": 2 },
+        { "id": "spanish-for-10", "type": "mcq", "tag": "Language", "text": "What is the Spanish word for 10?", "options": ["Dix", "Dieci", "Diez", "Dez"], "correctIndex": 2, "maxPoints": 1 },
+        { "id": "perfect-10-olympic", "type": "mcq", "tag": "Sport", "text": "In which Olympic sport has a perfect 10 been recorded?", "options": ["Diving", "Gymnastics", "Dressage", "Figure Skating"], "correctIndex": 1, "maxPoints": 1 },
+        { "id": "millionaire-10th-question", "type": "mcq", "tag": "TV", "text": "In the classic UK version of 'Who Wants to Be a Millionaire', how much is the 10th question worth?", "options": ["£16,000", "£32,000", "£64,000", "£125,000"], "correctIndex": 1, "maxPoints": 1 },
+        { "id": "pokemon-number-10", "type": "mcq", "tag": "Gaming", "text": "What Pokémon is number 10 in the Pokédex?", "options": ["Metapod", "Caterpie", "Weedle", "Butterfree"], "correctIndex": 1, "maxPoints": 1 },
+        { "id": "order-the-tens", "type": "text-exact", "tag": "General knowledge", "text": "Put these in chronological order, earliest first: Ben 10 (animated series), '10,000 Hours' by Dan + Shay & Justin Bieber, Big Brother UK Season 10. (Format: Answer 1, Answer 2, Answer 3)", "correctAnswer": "ben 10, big brother uk season 10, 10000 hours", "acceptedAnswers": ["ben 10, big brother uk season 10, 10000 hours", "ben 10, big brother uk season 10, 10,000 hours", "ben 10, big brother season 10, 10000 hours", "ben 10, big brother, 10000 hours"], "maxPoints": 1 },
+        { "id": "tenth-doctor-who", "type": "text-exact", "tag": "TV", "text": "Who played the Tenth Doctor in Doctor Who?", "correctAnswer": "david tennant", "acceptedAnswers": ["david tennant", "tennant"], "maxPoints": 1 },
+        { "id": "ten-commandments", "type": "text-exact", "tag": "Religion", "text": "What collective name is given to the set of laws given to Moses on Mount Sinai?", "correctAnswer": "the ten commandments", "acceptedAnswers": ["the ten commandments", "ten commandments", "the commandments"], "maxPoints": 1 },
+        { "id": "decade-language", "type": "mcq", "tag": "Language", "text": "The word 'decade' comes from which language?", "options": ["Latin", "French", "Greek", "Arabic"], "correctIndex": 2, "maxPoints": 1 },
+        { "id": "decibel-scale", "type": "text-exact", "tag": "Science", "text": "What is the name of the base-10 logarithmic scale commonly used to measure the intensity of sound?", "correctAnswer": "decibel", "acceptedAnswers": ["decibel", "decibels", "the decibel scale"], "maxPoints": 1 },
+        { "id": "order-1910s", "type": "text-exact", "tag": "History", "text": "Which came first in the 1910s: World War 1, the sinking of the Titanic, or the founding of KLM Royal Dutch Airlines?", "correctAnswer": "the sinking of the titanic", "acceptedAnswers": ["the sinking of the titanic", "titanic", "the titanic"], "maxPoints": 1 },
+        { "id": "danube-countries", "type": "text-exact", "tag": "Geography", "text": "Which river forms part of the border between Austria and Slovakia and flows through 10 countries overall?", "correctAnswer": "the danube", "acceptedAnswers": ["the danube", "danube", "danube river"], "maxPoints": 1 },
+        { "id": "extra-fingers-toes", "type": "text-exact", "tag": "General knowledge", "text": "What is the medical term for someone born with more than 10 fingers or toes?", "correctAnswer": "polydactyly", "acceptedAnswers": ["polydactyly", "polydactyl"], "maxPoints": 1 },
+        { "id": "fast-furious-10", "type": "text-exact", "tag": "Movies", "text": "What is the name of the 10th instalment of the Fast & Furious series?", "correctAnswer": "fast x", "acceptedAnswers": ["fast x", "fast 10", "fast & furious 10"], "maxPoints": 1 },
+        { "id": "radiocarbon-dating", "type": "text-exact", "tag": "Archaeology", "text": "Irish bog bodies such as Clonycavan Man have been dated to within 10 years using which scientific technique?", "correctAnswer": "radiocarbon dating", "acceptedAnswers": ["radiocarbon dating", "carbon dating", "carbon-14 dating", "c14 dating"], "maxPoints": 1 },
+        { "id": "decagon-angle", "type": "numeric", "tag": "Maths", "text": "What is the interior angle of a regular decagon (10-sided shape)? Hint: it's over 90 degrees.", "correctNumber": 144, "maxPoints": 1 }
+    ] },
+    { "title": "Big Fat Sunday Quiz #6", "questions": [
+
+      [
         {"id": "top-5-musicals","type": "multi-text","tag": "Musicals","text": "Name the 5 biggest Broadway musicals of all time (1 point each)", "answers": ["the lion king", "wicked", "hamilton", "chicago", "the phantom of the opera"],"acceptedAnswers": [ ["the lion king", "lion king"],["wicked"],["hamilton"], ["chicago"],["the phantom of the opera", "phantom of the opera", "phantom"] ], "maxPoints": 5},
         { "id": "no-land-border-russia", "type": "mcq", "tag": "Geography", "text": "Which country has no land border with Russia: Mongolia, North Korea, Norway or Uzbekistan?", "options": ["Mongolia", "North Korea", "Norway", "Uzbekistan"], "correctIndex": 3, "maxPoints": 1 },
         { "id": "simpsons-beatle", "type": "mcq", "tag": "TV", "text": "In an episode of The Simpsons, Marge belatedly receives a letter from which Beatle?", "options": ["John Lennon", "Paul McCartney", "George Harrison", "Ringo Starr"], "correctIndex": 3, "maxPoints": 1 },
@@ -148,8 +176,8 @@
         { "id": "most-common-letter", "type": "text-exact", "tag": "Language", "text": "What is the most commonly used letter in the English alphabet?", "correctAnswer": "e", "acceptedAnswers": ["e"], "maxPoints": 1 },
         { "id": "capital-algeria", "type": "text-exact", "tag": "Geography", "text": "What is the capital of Algeria?", "correctAnswer": "algiers", "acceptedAnswers": ["algiers"], "maxPoints": 1 },
         { "id": "colour-blindness-gender", "type": "mcq", "tag": "Biology", "text": "Is colour-blindness more prevalent in men or women?", "options": ["Men", "Women"], "correctIndex": 0, "maxPoints": 1 }
+]
     ] },
-    { "title": "Big Fat Sunday Quiz #6", "questions": [] },
     { "title": "Big Fat Sunday Quiz #7", "questions": [] },
     { "title": "Big Fat Sunday Quiz #8", "questions": [] },
     { "title": "Big Fat Sunday Quiz #9", "questions": [] },
